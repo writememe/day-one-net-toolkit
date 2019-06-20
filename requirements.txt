@@ -1,0 +1,8 @@
+napalm
+nornir
+requests
+pathlib
+datetime
+pandas
+xlwt
+openpyxl
