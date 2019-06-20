@@ -1,0 +1,72 @@
+---
+dfjt-r001.lab.dfjt.local:
+    hostname: dfjt-r001.lab.dfjt.local
+    groups:
+        - ios
+    data:
+        site: lab
+        role: external-router
+        type: network_device
+        system:
+          image: 15.1(4r)M
+          uptime: 10
+
+lab-iosv-01.lab.dfjt.local:
+    hostname: lab-iosv-01.lab.dfjt.local
+    groups:
+        - ios
+    data:
+        site: lab
+        role: border-router
+        type: network_device
+        system:
+            image: 15.4(1)T
+            uptime: 10
+
+lab-iosv-02.lab.dfjt.local:
+    hostname: lab-iosv-02.lab.dfjt.local
+    groups:
+        - ios
+    data:
+        site: lab
+        role: border-router
+        type: network_device
+        system:
+            image: 15.4(1)T
+            uptime: 100
+
+lab-arista-01.lab.dfjt.local:
+    hostname: lab-arista-01.lab.dfjt.local
+    groups:
+        - eos
+    data:
+        site: lab
+        role: border-router
+        type: network_device
+        system:
+          image: 4.17.5M
+          uptime: 100
+
+lab-junos-01.lab.dfjt.local:
+    hostname: lab-junos-01.lab.dfjt.local
+    groups:
+        - junos
+    data:
+        site: lab
+        role: lab-router
+        type: network_device
+        system:
+            image: 12.1X44-D20.3
+            uptime: 60
+
+lab-nxos-01.lab.dfjt.local:
+    hostname: lab-nxos-01.lab.dfjt.local
+    groups:
+        - nxos
+    data:
+        site: lab
+        role: lab-switch
+        type: network_device
+        system:
+            image: 7.0(3)I5(2
+            uptime: 60

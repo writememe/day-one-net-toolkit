@@ -1,0 +1,22 @@
+---
+# groups.yaml file
+# Strings were quoted to render better on the web
+ios:
+    platform: ios
+    username: svc-ansible
+    password: Aut0m@t3
+
+junos:
+    platform: junos
+    username: svc-ansible
+    password: Aut0m@t3
+
+eos:
+    platform: eos
+    username: svc-ansible
+    password: Aut0m@t3
+
+nxos:
+    platform: nxos
+    username: svc-ansible
+    password: Aut0m@t3
