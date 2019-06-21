@@ -6,3 +6,4 @@ datetime
 pandas
 xlwt
 openpyxl
+black
