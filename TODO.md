@@ -8,8 +8,8 @@ A list of items to complete for this toolkit
 
 ## collection-toolkit.py
 
-[ ] - Comment up code
-[ ] - Create log file handler for script
-[ ] - Output openpyxl files to a sub-directory
-[ ] - Work out how to format Excel sheet to format headers
-[ ] - Provide IPv6 support for interfaces_ip function
+[ ] - Comment up code  
+[ ] - Create log file handler for script  
+[ ] - Output openpyxl files to a sub-directory  
+[ ] - Work out how to format Excel sheet to format headers  
+[ ] - Provide IPv6 support for interfaces_ip function  
