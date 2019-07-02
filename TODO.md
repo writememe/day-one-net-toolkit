@@ -4,7 +4,7 @@ A list of items to complete for this toolkit
 
 ## day-one-toolkit.py
 
-[ ] - Put all supported filters into toolkit and test now that try/except block works
+[ ] - Put all supported filters into toolkit and test now that try/except block works  
 [ ] - Comment up code
 
 ## collection-toolkit.py
