@@ -113,7 +113,7 @@ def filter_collector():
     '''
     # Capture time
     cur_time = dt.datetime.now()
-    # Cleanup time, so that the format is clean for the output file 2016-12-01-13-04-59
+    # Cleanup time, so that the format is clean for the output file 2019-07-01-13-04-59
     fmt_time = cur_time.strftime('%Y-%m-%d-%H-%M-%S')
     # Set log directory variable
     log_dir = 'logs'
