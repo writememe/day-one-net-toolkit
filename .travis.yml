@@ -8,7 +8,7 @@ python:
 install:
   - pip install -r requirements.txt
 
-# Basic python linting tests
+# Basic python/YAML linting tests
 script:
   - pylama .
   - black --check .

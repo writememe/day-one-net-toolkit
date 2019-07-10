@@ -74,7 +74,7 @@ def main_collector(wb, log_file):
         "Model",
         "OS Version",
         "Serial Number",
-        "Uptime",
+        "Uptime (seconds)",
     ]
     # Write headers on the top line of the file
     facts_ws.append(facts_headers)

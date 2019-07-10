@@ -1,6 +1,6 @@
 ---
 dfjt-r001.lab.dfjt.local:
-    hostname: dfjt-r001.lab.dfjt.local
+    hostname: 10.0.0.1
     groups:
         - ios
     data:

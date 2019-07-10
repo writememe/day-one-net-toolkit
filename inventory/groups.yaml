@@ -21,3 +21,7 @@ nxos:
     platform: nxos
     username: svc-ansible
     password: Aut0m@t3
+iosxr:
+    platform: iosxr
+    username: svc-ansible
+    password: Aut0m@t3
