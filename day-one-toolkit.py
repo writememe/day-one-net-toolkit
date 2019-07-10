@@ -104,8 +104,6 @@ def filter_collector():
 
     For now, all filters are stored in the facts/ directory using the following convention:
     <hostname>/<filter_name>.json
-
-
     :return:
     """
     """
@@ -148,7 +146,10 @@ def filter_collector():
             }
         }
     )
-    # The following block of lists are the supported filters per OS.
+    """
+    The following block of lists are the supported filters per OS based
+    on the website https://napalm.readthedocs.io/en/latest/support/
+    """
     # IOS supported filters
     ios_filters = [
         "arp_table",
@@ -481,5 +482,5 @@ def filter_collector():
     log_file.close()
 
 
-# Run Functions
+# Execute main program
 filter_collector()
