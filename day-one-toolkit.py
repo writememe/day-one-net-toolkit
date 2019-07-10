@@ -285,7 +285,7 @@ def filter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=10)
+            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -301,7 +301,7 @@ def filter_collector():
             print("Processing Filter: " + str(entry))
             log_file.write("Processing Filter: " + str(entry) + "\n")
             # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=10)
+            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
             # Conditional block to record success/fail count of the job
             if filters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
@@ -324,7 +324,7 @@ def filter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=10)
+            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -340,7 +340,7 @@ def filter_collector():
             print("Processing Filter: " + str(entry))
             log_file.write("Processing Filter: " + str(entry) + "\n")
             # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=10)
+            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
             # Conditional block to record success/fail count of the job
             if filters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
@@ -363,7 +363,7 @@ def filter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=10)
+            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -379,7 +379,7 @@ def filter_collector():
             print("Processing Filter: " + str(entry))
             log_file.write("Processing Filter: " + str(entry) + "\n")
             # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=10)
+            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
             # Conditional block to record success/fail count of the job
             if filters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
@@ -402,7 +402,7 @@ def filter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=10)
+            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -417,7 +417,7 @@ def filter_collector():
             print("Processing Filter: " + str(entry))
             log_file.write("Processing Filter: " + str(entry) + "\n")
             # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=10)
+            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
             # Conditional block to record success/fail count of the job
             if filters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
@@ -440,7 +440,7 @@ def filter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=10)
+            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -456,7 +456,7 @@ def filter_collector():
             print("Processing Filter: " + str(entry))
             log_file.write("Processing Filter: " + str(entry) + "\n")
             # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=10)
+            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
             # Conditional block to record success/fail count of the job
             if filters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
