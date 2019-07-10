@@ -6,3 +6,4 @@ datetime
 openpyxl
 black
 pylama
+yamllint

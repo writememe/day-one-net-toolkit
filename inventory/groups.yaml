@@ -1,6 +1,7 @@
 ---
 # groups.yaml file
-# Strings were quoted to render better on the web
+# Each group is used to attribute back to a platform
+# TODO: Work out how to properly store secrets
 ios:
     platform: ios
     username: svc-ansible

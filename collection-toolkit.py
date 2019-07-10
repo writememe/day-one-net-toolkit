@@ -16,7 +16,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 """
 The following five functions are used to retrieve NAPALM getters required
-for the summary spreadsheet
+for the summary spreadsheet.
 """
 
 
@@ -207,6 +207,8 @@ def main_collector(wb, log_file):
                 # Add to log file
                 log_file.write("Interface Enabled: " + str(int_enable_result) + "\n")
                 line = [host, int, int_desc_result, int_up_result, int_enable_result]
+                # Debug print
+                # print(line)
                 # Write values to file
                 interfaces_ws.append(line)
             # Display printout
@@ -323,7 +325,7 @@ def main_collector(wb, log_file):
             int_ip_list = []
             # For loop to retrieve the list of interfaces
             for entry in interface_ip_name_result:
-                # Append entries to the int_list list
+                # Append entries to the int_ip_list list
                 int_ip_list.append(entry)
                 # Debug print
                 # print(int_ip_list)
@@ -401,6 +403,8 @@ def main_collector(wb, log_file):
                     str(ipv6_address),
                     str(prefix_length_v6),
                 ]
+                # Debug print
+                # print(line)
                 # Save values to row in workbook
                 interfaces_ip_ws.append(line)
             # Display printout
@@ -466,6 +470,8 @@ def main_collector(wb, log_file):
                 log_file.write("Remote Hostname: " + str(remote_hostname) + "\n")
                 # Append results to a line to be saved to the workbook
                 line = [host, local_port, remote_hostname, remote_port]
+                # Debug print
+                # print(line)
                 # Write values to file
                 lldp_nei_ws.append(line)
             # Display printout
@@ -505,9 +511,8 @@ def main_collector(wb, log_file):
             # Empty list which will be appended to in for loop
             user_list = []
             for entry in users_name_result:
-                # Append entries to the neighbor_list list
+                # Append entries to the user_list list
                 user_list.append(entry)
-                # print(user_list)
             for user in user_list:
                 # Extract the User privilege level and assign to a variable
                 user_level = users_name_result[user]["level"]
@@ -556,9 +561,8 @@ def main_collector(wb, log_file):
         # Empty list which will be appended to in for loop
         user_list = []
         for entry in users_name_result:
-            # Append entries to the neighbor_list list
+            # Append entries to the user_list list
             user_list.append(entry)
-            # print(user_list)
         for user in user_list:
             # Extract the User privilege level and assign to a variable
             user_level = users_name_result[user]["level"]
@@ -592,14 +596,18 @@ def main_collector(wb, log_file):
         log_file.write("End Processing Host - Users: " + str(host) + "\n")
 
 
-def process_functions(wb, log_file):
-    main_collector(wb, log_file)
-
-
 def create_workbook():
+    """
+    This function creates an Excel workbook which is then passed to the main
+    function 'main_collector' to retrieve and store results into an Excel
+    workbook.
+
+    It also sets up a log file
+    :return:
+    """
     # Capture time
     cur_time = dt.datetime.now()
-    # Cleanup time, so that the format is clean for the output file 2016-12-01-13-04-59
+    # Cleanup time, so that the format is clean for the output file 2019-07-01-13-04-59
     fmt_time = cur_time.strftime("%Y-%m-%d-%H-%M-%S")
     # Set log directory variable
     log_dir = "logs"
@@ -614,11 +622,16 @@ def create_workbook():
     # Setup workbook parameters
     wb = openpyxl.Workbook()
     # Execute program
-    process_functions(wb, log_file)
+    main_collector(wb, log_file)
+    # Assign customer name to Excel file
     customer_name = "Customer"
-    time_now = (dt.datetime.now()).strftime("%d-%m-%H-%M")
-    wb_name = "Diagnostics-" + customer_name + "-2019-" + time_now + ".xlsx"
-    print(wb_name)
+    # String together workbook name i.e. customer-2019-01-01-13-00-00.xlsx
+    wb_name = "Collection-" + customer_name + "-" + fmt_time + ".xlsx"
+    # Print workbook name
+    print(
+        "COLLECTION COMPLETE \n" + "Results located in Excel workbook: " + str(wb_name)
+    )
+    # Save workbook
     wb.save(wb_name)
 
 
