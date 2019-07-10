@@ -63,7 +63,7 @@ Throughout the setup, we are going to use the example device inventory below:
 
 ### Step 1 - inventory/hosts.yaml file
 
-The first step is to populate the hosts.yaml file with the pertinent information about your network devices.
+The first step is to populate the hosts.yaml file with the pertinent information about your hosts.
 
 Below is an example of the hosts.yaml structure for one entry:
 
@@ -150,13 +150,87 @@ You are now setup and ready to use the toolkit!
 
 ## day-one-toolkit.py - Detailed discovery and config collection
 
+This script uses the Nornir inventory used in the setup and performs two operations:
+
+- Collect the running and startup/candidate configurations for each hosts and
+store them using the following directory convention:
+
+```
+.
+|
+├── configs
+    ├── lab-arista-01.lab.dfjt.local
+    │   ├── running.txt
+    │   └── startup.txt
+    ├── lab-iosv-01.lab.dfjt.local
+    │   ├── running.txt
+    │   └── startup.txt
+    └── lab-nxos-01.lab.dfjt.local
+        ├── running.txt
+        └── startup.txt
+
+
+```
+NOTE: The directory structure is dynamically allocated and the appropriate configs are retrieved based on platform.
+
+- Based on the supported list of [NAPALM getters](https://napalm.readthedocs.io/en/latest/support/index.html#getters-support-matrix),
+ attempt to retrieve all the getters which are supported on each platform and store them using the following directory convention:  
+ 
+```
+facts
+├── lab-arista-01.lab.dfjt.local
+    ├── arp_table.json
+    ├── bgp_neighbors.json
+    ├── bgp_neighbors_detail.json
+    ├── environment.json
+    ├── facts.json
+    ├── interfaces.json
+    ├── interfaces_counters.json
+    └── interfaces_ip.json
+
+```
+
+There is a log file which is dynamically created in the `logs/` directory which maintains the success and failure of each task on each host
+and provides a summary of what failed and succeeded. This file follows the naming convention:
+
+_DISCOVERY-LOG-YYYY-MM-DD-HH-MM-SS.txt_  
+
+A collection run on July the 10th, 2019 at 19:19:54 would have the log file name of:  
+
+DISCOVERY-LOG-2019-07-10-19-19-54.txt
+
+From here, you could SCP these files to a central location, or commit them to a central repository for version control and tracking.
+
+
 ## collection-toolkit.py - Summarised discovery
 
-The purpose of this repository to provide network operators with a day one toolkit to collect information about a new network.
+This script uses the Nornir inventory used in the setup collects key information about all devices using NAPALM getters
+and saves them to an Excel workbook. The information collected is:  
 
-The idea is at the end of day one, you should have the following:
+- Facts
+- Interfaces
+- Interfaces IP
+- LLDP neighbor
+- Users
 
-- All running and startup/candidate configs
-- All applicable NAPALM getters
+Some of the information has been omitted from the spreadsheet as this is meant to provide a key summary of the environment.
 
-This toolkit uses Nornir as the DSL. Being pure python, we can use all the existing Python modules on offer.
+One the script has run, it will create an Excel workbook using the following convention:  
+
+_Collection-Customer-YYYY-MM-DD-HH-MM-SS.xlsx_
+
+In the toolkit, you can change the customer name variable in the code under the `create_workbook` function towards the end of the code:  
+
+```
+# Assign customer name to Excel file
+customer_name = "Customer"
+```
+
+There is a log file which is dynamically created in the `logs/` directory which maintains the success and failure of each task on each host
+and provides a summary of what failed and succeeded. This file follows the naming convention:
+
+_COLLECTION-LOG-YYYY-MM-DD-HH-MM-SS.txt_  
+
+A collection run on July the 10th, 2019 at 19:19:54 would have the log file name of:  
+
+COLLECTION-LOG-2019-07-10-19-19-54.txt
