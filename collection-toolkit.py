@@ -131,8 +131,9 @@ def main_collector(wb, log_file):
         }
     )
     """
-    The following block of code assigns a filter based on platform to a variable. This variable is used later on to
-    apply logic in for loops
+    The following block of code assigns a filter based on
+    platform to a variable. This variable is used later on
+    to apply logic in for loops
     """
     ios_devices = nr.filter(platform="ios")
     junos_devices = nr.filter(platform="junos")

@@ -1,0 +1,13 @@
+language: python
+python:
+  - 3.6
+  - 3.7
+
+# Install python dependencies from requirements file
+install:
+  - pip install -r requirements.txt
+
+# Basic python linting tests
+script:
+  - pylama .
+  - black --check .

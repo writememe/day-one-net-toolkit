@@ -110,7 +110,8 @@ def filter_collector():
     """
     """
     The following block of code is used to generate a log file in a directory.
-    These log files will indicate the success/failure of filter collector for retrospective analysis.
+    These log files will indicate the success/failure of filter collector
+    for retrospective analysis.
     """
     # Capture time
     cur_time = dt.datetime.now()
@@ -251,8 +252,8 @@ def filter_collector():
         "users",
     ]
     """
-    The following block of code assigns a filter based on platform to a variable. This variable is used later on to
-    apply logic in for loops
+    The following block of code assigns a filter based on platform to a variable.
+    This variable is used later on to apply logic in for loops
     """
     ios_devices = nr.filter(platform="ios")
     junos_devices = nr.filter(platform="junos")
@@ -260,8 +261,8 @@ def filter_collector():
     nxos_devices = nr.filter(platform="nxos")
     iosxr_devices = nr.filter(platform="iosxr")
     """
-    The following block of code is a list of config filters which will be iterated over to collect the different
-    config types per OS
+    The following block of code is a list of config filters which will be
+    iterated over to collect the different config types per OS
     """
     ios_config_filters = ["running", "startup"]
     junos_config_filters = ["running", "candidate"]
@@ -269,9 +270,9 @@ def filter_collector():
     nxos_config_filters = ["running", "startup"]
     iosxr_config_filters = ["running", "startup"]
     """
-    The following block is the main component of the program. Each OS collects the running config, all supported
-    filters and the startup/candidate config based on the OS.
-    Each OS block is as uniform as possible.
+    The following block is the main component of the program. Each OS collects
+    the running config, all supported filters and the startup/candidate config
+    based on the OS. Each OS block is as uniform as possible.
     """
     # IOS Platform Block
     for host in ios_devices.inventory.hosts.items():
