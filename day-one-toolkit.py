@@ -18,12 +18,12 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 # Functions
 
 
-def collect_filters(task, filter, dir=False):
+def collect_getters(task, getter, dir=False):
     """
-    This function is used to collect all applicable filters for the applicable OS
+    This function is used to collect all applicable getters for the applicable OS
     and then store these results under the respective facts/<hostname>/ directory.
     :param task: The name of the task to be run.
-    :param filter: The name of the NAPALM filter
+    :param getter: The name of the NAPALM getter
     :param dir: A boolean to indicate whether the directory is created or not.
     :return:
     """
@@ -42,26 +42,26 @@ def collect_filters(task, filter, dir=False):
     # Try/except block to catch exceptions, such as NotImplementedError
     try:
         # Gather facts using napalm_get and assign to a variable
-        facts_result = task.run(task=napalm_get, getters=[filter])
+        facts_result = task.run(task=napalm_get, getters=[getter])
         # Write the results to a JSON, using the convention <filter_name>.json
         task.run(
             task=write_file,
-            content=json.dumps(facts_result[0].result[filter], indent=2),
-            filename=f"" + str(entry_dir) + "/" + str(filter) + ".json",
+            content=json.dumps(facts_result[0].result[getter], indent=2),
+            filename=f"" + str(entry_dir) + "/" + str(getter) + ".json",
         )
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
-        return "Filter Not Implemented"
+        return "Getter Not Implemented"
     except AttributeError:
         return "AttributeError: Driver has no attribute"
 
 
-def collect_config(task, filter, dir=False):
+def collect_config(task, getter, dir=False):
     """
-    This function is used to collect applicable configs filters for the applicable OS
+    This function is used to collect applicable configs getters for the applicable OS
     and then store these results under the respective configs/<hostname>/ directory
     :param task:
-    :param filter:
+    :param getter:
     :param dir:
     :return:
     """
@@ -84,25 +84,25 @@ def collect_config(task, filter, dir=False):
         # Write the results to a JSON, using the convention <filter_name>.txt
         task.run(
             task=write_file,
-            content=config_result.result["config"][filter],
-            filename=f"" + str(entry_dir) + "/" + str(filter) + ".txt",
+            content=config_result.result["config"][getter],
+            filename=f"" + str(entry_dir) + "/" + str(getter) + ".txt",
         )
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
-        print("NAPALM get filter not implemented " + str(filter))
+        print("NAPALM get filter not implemented " + str(getter))
 
 
-def filter_collector():
+def getter_collector():
     """
     TODO: Rewrite this documentation ...
-    This function performs a collection of supported filters based on
+    This function performs a collection of supported getters based on
     the official NAPALM supported filter list:
     https://napalm.readthedocs.io/en/latest/support/
 
-    It has been written in a way whereby one simply updates the appropriate <os>_filters
-    list to add or remove supported filters
+    It has been written in a way whereby one simply updates the appropriate <os>_getters
+    list to add or remove supported getters
 
-    For now, all filters are stored in the facts/ directory using the following convention:
+    For now, all getters are stored in the facts/ directory using the following convention:
     <hostname>/<filter_name>.json
     :return:
     """
@@ -130,7 +130,7 @@ def filter_collector():
     log_file.write("STARTING DISCOVERY: " + str(fmt_time) + "\n\n")
     """
     Initialise two counters, so that success and failure can be counted
-    and incremented as the filters are collected.
+    and incremented as the getters are collected.
     """
     # Success Counter
     success_count = 0
@@ -147,11 +147,11 @@ def filter_collector():
         }
     )
     """
-    The following block of lists are the supported filters per OS based
+    The following block of lists are the supported getters per OS based
     on the website https://napalm.readthedocs.io/en/latest/support/
     """
-    # IOS supported filters
-    ios_filters = [
+    # IOS supported getters
+    ios_getters = [
         "arp_table",
         "bgp_neighbors",
         "bgp_neighbors_detail",
@@ -172,8 +172,8 @@ def filter_collector():
         "snmp_information",
         "users",
     ]
-    # JUNOS supported filters
-    junos_filters = [
+    # JUNOS supported getters
+    junos_getters = [
         "arp_table",
         "bgp_config",
         "bgp_neighbors",
@@ -195,8 +195,8 @@ def filter_collector():
         "snmp_information",
         "users",
     ]
-    # EOS supported filters
-    eos_filters = [
+    # EOS supported getters
+    eos_getters = [
         "arp_table",
         "bgp_config",
         "bgp_neighbors",
@@ -216,8 +216,8 @@ def filter_collector():
         "snmp_information",
         "users",
     ]
-    # NXOS supported filters
-    nxos_filters = [
+    # NXOS supported getters
+    nxos_getters = [
         "arp_table",
         "bgp_neighbors",
         "facts",
@@ -232,8 +232,8 @@ def filter_collector():
         "snmp_information",
         "users",
     ]
-    # IOSXR supported filters
-    iosxr_filters = [
+    # IOSXR supported getters
+    iosxr_getters = [
         "arp_table",
         "bgp_config",
         "bgp_neighbors",
@@ -262,17 +262,17 @@ def filter_collector():
     nxos_devices = nr.filter(platform="nxos")
     iosxr_devices = nr.filter(platform="iosxr")
     """
-    The following block of code is a list of config filters which will be
+    The following block of code is a list of config getters which will be
     iterated over to collect the different config types per OS
     """
-    ios_config_filters = ["running", "startup"]
-    junos_config_filters = ["running", "candidate"]
-    eos_config_filters = ["running", "startup"]
-    nxos_config_filters = ["running", "startup"]
-    iosxr_config_filters = ["running", "startup"]
+    ios_config_getters = ["running", "startup"]
+    junos_config_getters = ["running", "candidate"]
+    eos_config_getters = ["running", "startup"]
+    nxos_config_getters = ["running", "startup"]
+    iosxr_config_getters = ["running", "startup"]
     """
     The following block is the main component of the program. Each OS collects
-    the running config, all supported filters and the startup/candidate config
+    the running config, all supported getters and the startup/candidate config
     based on the OS. Each OS block is as uniform as possible.
     """
     # IOS Platform Block
@@ -280,12 +280,12 @@ def filter_collector():
         # Starting processing of a host
         print("** Start Processing Host: " + str(host))
         log_file.write("** Start Processing Host: " + str(host) + "\n")
-        for config in ios_config_filters:
-            # Start collecting the config filters
+        for config in ios_config_getters:
+            # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
+            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -295,15 +295,15 @@ def filter_collector():
                 print("FAILED : " + str(config) + " config")
                 log_file.write("FAILED : " + str(config) + " config" + "\n")
                 fail_count += 1
-        # For block to collect all supported filters
-        for entry in ios_filters:
-            # Start processing filters
-            print("Processing Filter: " + str(entry))
-            log_file.write("Processing Filter: " + str(entry) + "\n")
-            # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
+        # For block to collect all supported getters
+        for entry in ios_getters:
+            # Start processing getters
+            print("Processing Getter: " + str(entry))
+            log_file.write("Processing Getter: " + str(entry) + "\n")
+            # Execute collect_getters function
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             # Conditional block to record success/fail count of the job
-            if filters.failed is False:
+            if getters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
@@ -319,12 +319,12 @@ def filter_collector():
         # Starting processing of a host
         print("** Start Processing Host: " + str(host))
         log_file.write("** Start Processing Host: " + str(host) + "\n")
-        for config in eos_config_filters:
-            # Start collecting the config filters
+        for config in eos_config_getters:
+            # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
+            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -334,15 +334,15 @@ def filter_collector():
                 print("FAILED : " + str(config) + " config")
                 log_file.write("FAILED : " + str(config) + " config" + "\n")
                 fail_count += 1
-        # For block to collect all supported filters
-        for entry in eos_filters:
-            # Start processing filters
-            print("Processing Filter: " + str(entry))
-            log_file.write("Processing Filter: " + str(entry) + "\n")
-            # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
+        # For block to collect all supported getters
+        for entry in eos_getters:
+            # Start processing getters
+            print("Processing Getter: " + str(entry))
+            log_file.write("Processing Getter: " + str(entry) + "\n")
+            # Execute collect_getters function
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             # Conditional block to record success/fail count of the job
-            if filters.failed is False:
+            if getters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
@@ -358,12 +358,12 @@ def filter_collector():
         # Starting processing of a host
         print("** Start Processing Host: " + str(host))
         log_file.write("** Start Processing Host: " + str(host) + "\n")
-        for config in nxos_config_filters:
-            # Start collecting the config filters
+        for config in nxos_config_getters:
+            # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
+            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -373,15 +373,15 @@ def filter_collector():
                 print("FAILED : " + str(config) + " config")
                 log_file.write("FAILED : " + str(config) + " config" + "\n")
                 fail_count += 1
-        # For block to collect all supported filters
-        for entry in nxos_filters:
-            # Start processing filters
-            print("Processing Filter: " + str(entry))
-            log_file.write("Processing Filter: " + str(entry) + "\n")
-            # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
+        # For block to collect all supported getters
+        for entry in nxos_getters:
+            # Start processing getters
+            print("Processing Getter: " + str(entry))
+            log_file.write("Processing Getter: " + str(entry) + "\n")
+            # Execute collect_getters function
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             # Conditional block to record success/fail count of the job
-            if filters.failed is False:
+            if getters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
@@ -397,12 +397,12 @@ def filter_collector():
         # Starting processing of a host
         print("** Start Processing Host: " + str(host))
         log_file.write("** Start Processing Host: " + str(host) + "\n")
-        for config in junos_config_filters:
-            # Start collecting the config filters
+        for config in junos_config_getters:
+            # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
+            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -412,14 +412,14 @@ def filter_collector():
                 print("FAILED : " + str(config) + " config")
                 log_file.write("FAILED : " + str(config) + " config" + "\n")
                 fail_count += 1
-        for entry in junos_filters:
-            # Start processing filters
-            print("Processing Filter: " + str(entry))
-            log_file.write("Processing Filter: " + str(entry) + "\n")
-            # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
+        for entry in junos_getters:
+            # Start processing getters
+            print("Processing Getter: " + str(entry))
+            log_file.write("Processing Getter: " + str(entry) + "\n")
+            # Execute collect_getters function
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             # Conditional block to record success/fail count of the job
-            if filters.failed is False:
+            if getters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
@@ -435,12 +435,12 @@ def filter_collector():
         # Starting processing of a host
         print("** Start Processing Host: " + str(host))
         log_file.write("** Start Processing Host: " + str(host) + "\n")
-        for config in iosxr_config_filters:
-            # Start collecting the config filters
+        for config in iosxr_config_getters:
+            # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, num_workers=1)
+            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
             # Conditional block to record success/fail count of the job
             if config_result.failed is False:
                 print("SUCCESS : " + str(config) + " config")
@@ -450,15 +450,15 @@ def filter_collector():
                 print("FAILED : " + str(config) + " config")
                 log_file.write("FAILED : " + str(config) + " config" + "\n")
                 fail_count += 1
-        # For block to collect all supported filters
-        for entry in iosxr_filters:
-            # Start processing filters
-            print("Processing Filter: " + str(entry))
-            log_file.write("Processing Filter: " + str(entry) + "\n")
-            # Execute collect_filters function
-            filters = nr.run(task=collect_filters, filter=entry, num_workers=1)
+        # For block to collect all supported getters
+        for entry in iosxr_getters:
+            # Start processing getters
+            print("Processing Getter: " + str(entry))
+            log_file.write("Processing Getter: " + str(entry) + "\n")
+            # Execute collect_getters function
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             # Conditional block to record success/fail count of the job
-            if filters.failed is False:
+            if getters.failed is False:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
@@ -483,4 +483,4 @@ def filter_collector():
 
 
 # Execute main program
-filter_collector()
+getter_collector()
