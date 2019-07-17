@@ -1,5 +1,8 @@
 # Day One Network Discovery Toolkit #
 
+[![Build Status](https://travis-ci.com/writememe/day-one-net-toolkit.svg?branch=master)](https://travis-ci.com/writememe/day-one-net-toolkit)
+
+
 ## Background ##
 
 This toolkit has been created to enable those who are relatively new with [Nornir](https://nornir.readthedocs.io/en/latest/index.html) or [NAPALM](https://napalm.readthedocs.io/en/latest/) with the 

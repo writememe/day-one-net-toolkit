@@ -631,6 +631,16 @@ def create_workbook():
     print(
         "COLLECTION COMPLETE \n" + "Results located in Excel workbook: " + str(wb_name)
     )
+    # Add to log file
+    log_file.write(
+        "\n"
+        + "COLLECTION COMPLETE \n"
+        + "Results located in Excel workbook: "
+        + str(wb_name)
+        + "\n"
+    )
+    # Close log file
+    log_file.close()
     # Save workbook
     wb.save(wb_name)
 
