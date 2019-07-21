@@ -24,7 +24,7 @@ By using this toolkit, you will be able to answer and provide information on que
 - What devices have the longest uptime?
 - What are all our serial numbers which we need for maintainance renewals?
 
-## Pre-requisties ##
+## Pre-requisites ##
 
 The following pre-requisites are required to use this toolkit:
 

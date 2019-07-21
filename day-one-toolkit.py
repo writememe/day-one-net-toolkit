@@ -5,6 +5,7 @@
 from nornir import InitNornir
 from nornir.plugins.tasks.networking import napalm_get
 from nornir.plugins.tasks.files import write_file
+from nornir.plugins.functions.text import print_result
 import json
 import requests
 import pathlib
@@ -23,7 +24,7 @@ def collect_getters(task, getter, dir=False):
     This function is used to collect all applicable getters for the applicable OS
     and then store these results under the respective facts/<hostname>/ directory.
     :param task: The name of the task to be run.
-    :param getter: The name of the NAPALM getter
+    :param getter: The name of the NAPALM getter.
     :param dir: A boolean to indicate whether the directory is created or not.
     :return:
     """
@@ -285,32 +286,32 @@ def getter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
+            config_result = nr.run(task=collect_config, getter=config, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
+            if config_result.failed is True:
+                print("FAILURE : " + str(config) + " config")
+                log_file.write("FAILURE : " + str(config) + " config" + "\n")
+                fail_count += 1
+            else:
                 print("SUCCESS : " + str(config) + " config")
                 log_file.write("SUCCESS : " + str(config) + " config" + "\n")
                 success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
-                fail_count += 1
         # For block to collect all supported getters
         for entry in ios_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if getters.failed is False:
+            if getters.failed is True:
+                log_file.write("FAILURE : " + str(entry) + "\n")
+                print("FAILURE : " + str(entry))
+                fail_count += 1
+            else:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
-                fail_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(host))
         log_file.write("** End Processing Host: " + str(host) + "\n\n")
@@ -324,32 +325,32 @@ def getter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
+            config_result = nr.run(task=collect_config, getter=config, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
+            if config_result.failed is True:
+                print("FAILURE : " + str(config) + " config")
+                log_file.write("FAILURE : " + str(config) + " config" + "\n")
+                fail_count += 1
+            else:
                 print("SUCCESS : " + str(config) + " config")
                 log_file.write("SUCCESS : " + str(config) + " config" + "\n")
                 success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
-                fail_count += 1
         # For block to collect all supported getters
         for entry in eos_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if getters.failed is False:
+            if getters.failed is True:
+                log_file.write("FAILURE : " + str(entry) + "\n")
+                print("FAILURE : " + str(entry))
+                fail_count += 1
+            else:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
-                fail_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(host))
         log_file.write("** End Processing Host: " + str(host) + "\n\n")
@@ -363,32 +364,32 @@ def getter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
+            config_result = nr.run(task=collect_config, getter=config, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
+            if config_result.failed is True:
+                print("FAILURE : " + str(config) + " config")
+                log_file.write("FAILURE : " + str(config) + " config" + "\n")
+                fail_count += 1
+            else:
                 print("SUCCESS : " + str(config) + " config")
                 log_file.write("SUCCESS : " + str(config) + " config" + "\n")
                 success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
-                fail_count += 1
         # For block to collect all supported getters
         for entry in nxos_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if getters.failed is False:
+            if getters.failed is True:
+                log_file.write("FAILURE : " + str(entry) + "\n")
+                print("FAILURE : " + str(entry))
+                fail_count += 1
+            else:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
-                fail_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(host) + "\n")
         log_file.write("** End Processing Host: " + str(host) + "\n\n")
@@ -402,31 +403,31 @@ def getter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
+            config_result = nr.run(task=collect_config, getter=config, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
+            if config_result.failed is True:
+                print("FAILURE : " + str(config) + " config")
+                log_file.write("FAILURE : " + str(config) + " config" + "\n")
+                fail_count += 1
+            else:
                 print("SUCCESS : " + str(config) + " config")
                 log_file.write("SUCCESS : " + str(config) + " config" + "\n")
                 success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
-                fail_count += 1
         for entry in junos_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if getters.failed is False:
+            if getters.failed is True:
+                log_file.write("FAILURE : " + str(entry) + "\n")
+                print("FAILURE : " + str(entry))
+                fail_count += 1
+            else:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
-                fail_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(host) + "\n")
         log_file.write("** End Processing Host: " + str(host) + "\n\n")
@@ -440,32 +441,32 @@ def getter_collector():
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
+            config_result = nr.run(task=collect_config, getter=config, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
+            if config_result.failed is True:
+                print("FAILURE : " + str(config) + " config")
+                log_file.write("FAILURE : " + str(config) + " config" + "\n")
+                fail_count += 1
+            else:
                 print("SUCCESS : " + str(config) + " config")
                 log_file.write("SUCCESS : " + str(config) + " config" + "\n")
                 success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
-                fail_count += 1
         # For block to collect all supported getters
         for entry in iosxr_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True, num_workers=1)
             # Conditional block to record success/fail count of the job
-            if getters.failed is False:
+            if getters.failed is True:
+                log_file.write("FAILURE : " + str(entry) + "\n")
+                print("FAILURE : " + str(entry))
+                fail_count += 1
+            else:
                 log_file.write("SUCCESS : " + str(entry) + "\n")
                 print("SUCCESS : " + str(entry))
                 success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
-                fail_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(host))
         log_file.write("** End Processing Host: " + str(host) + "\n\n")
