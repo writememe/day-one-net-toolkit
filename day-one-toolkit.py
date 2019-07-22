@@ -18,14 +18,13 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 # Functions
 
 
-def collect_getters(task, getter, dir=False):
+def collect_getters(task, getter):
     """
     This function is used to collect all applicable getters for the applicable OS
     and then store these results under the respective facts/<hostname>/ directory.
     :param task: The name of the task to be run.
-    :param getter: The name of the NAPALM getter
-    :param dir: A boolean to indicate whether the directory is created or not.
-    :return:
+    :param getter: The name of the NAPALM getter.
+    :return: An AggregatedResult of this task.
     """
     # Assign facts directory to variable
     fact_dir = "facts"
@@ -33,12 +32,10 @@ def collect_getters(task, getter, dir=False):
     host_dir = task.host.name
     # Assign the destination directory to a variable. i.e facts/hostname/
     entry_dir = fact_dir + "/" + host_dir
-    # If Else to handle creating directories. Default is to create them
-    if dir is False:
-        # Create facts directory
-        pathlib.Path(fact_dir).mkdir(exist_ok=True)
-        # Create entry directory
-        pathlib.Path(entry_dir).mkdir(exist_ok=True)
+    # Create facts directory and/or check that it exists
+    pathlib.Path(fact_dir).mkdir(exist_ok=True)
+    # Create entry directory and/or check that it exists
+    pathlib.Path(entry_dir).mkdir(exist_ok=True)
     # Try/except block to catch exceptions, such as NotImplementedError
     try:
         # Gather facts using napalm_get and assign to a variable
@@ -56,14 +53,13 @@ def collect_getters(task, getter, dir=False):
         return "AttributeError: Driver has no attribute"
 
 
-def collect_config(task, getter, dir=False):
+def collect_config(task, getter):
     """
     This function is used to collect applicable configs getters for the applicable OS
     and then store these results under the respective configs/<hostname>/ directory
-    :param task:
-    :param getter:
-    :param dir:
-    :return:
+    :param task: The name of the task to be run.
+    :param getter: The name of the NAPALM config getter.
+    :return: An AggregatedResult of this task.
     """
     # Assign configs directory to variable
     config_dir = "configs"
@@ -71,12 +67,10 @@ def collect_config(task, getter, dir=False):
     host_dir = task.host.name
     # Assign the destination directory to a variable. i.e configs/hostname/
     entry_dir = config_dir + "/" + host_dir
-    # If Else to handle creating directories. Default is to create them
-    if dir is False:
-        # Create facts directory
-        pathlib.Path(config_dir).mkdir(exist_ok=True)
-        # Create entry directory
-        pathlib.Path(entry_dir).mkdir(exist_ok=True)
+    # Create facts directory and/or check that it exists
+    pathlib.Path(config_dir).mkdir(exist_ok=True)
+    # Create entry directory and/or check that it exists
+    pathlib.Path(entry_dir).mkdir(exist_ok=True)
     # Try/except block to catch exceptions, such as NotImplementedError
     try:
         # Gather config using napalm_get and assign to a variable
@@ -94,17 +88,25 @@ def collect_config(task, getter, dir=False):
 
 def getter_collector():
     """
-    TODO: Rewrite this documentation ...
-    This function performs a collection of supported getters based on
+    This function is the main function of the toolkit.
+
+    It performs two roles:
+
+    1) Collects configurations for all devices in the inventory,
+    based on NAPALM support.
+
+    These configurations are saved in the configs/ directory using the following convention:
+    <hostname>/<filter_name>.txt
+
+    2) Performs a collection of supported getters based on
     the official NAPALM supported filter list:
     https://napalm.readthedocs.io/en/latest/support/
 
     It has been written in a way whereby one simply updates the appropriate <os>_getters
-    list to add or remove supported getters
-
-    For now, all getters are stored in the facts/ directory using the following convention:
+    list to add or remove supported getters. All getters are stored in the facts/
+    directory using the following convention:
     <hostname>/<filter_name>.json
-    :return:
+
     """
     """
     The following block of code is used to generate a log file in a directory.
@@ -277,200 +279,351 @@ def getter_collector():
     """
     # IOS Platform Block
     for host in ios_devices.inventory.hosts.items():
+        # Assign the hostname to a variable from the host tuple
+        hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(host))
-        log_file.write("** Start Processing Host: " + str(host) + "\n")
+        print("** Start Processing Host: " + str(hostname))
+        log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in ios_config_getters:
             # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
-                print("SUCCESS : " + str(config) + " config")
-                log_file.write("SUCCESS : " + str(config) + " config" + "\n")
-                success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
+            configs = nr.run(
+                task=collect_config, getter=config, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            configs_results = configs[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if configs_results is True:
+                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
                 fail_count += 1
+            else:
+                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
+                success_count += 1
         # For block to collect all supported getters
         for entry in ios_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if getters.failed is False:
-                log_file.write("SUCCESS : " + str(entry) + "\n")
-                print("SUCCESS : " + str(entry))
-                success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
+            getters = nr.run(
+                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            getters_results = getters[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if getters_results is True:
+                log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
+                print("FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
+            else:
+                log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
+                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(host))
-        log_file.write("** End Processing Host: " + str(host) + "\n\n")
+        print("** End Processing Host: " + str(hostname))
+        log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # EOS Platform Block
     for host in eos_devices.inventory.hosts.items():
+        # Assign the hostname to a variable from the host tuple
+        hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(host))
-        log_file.write("** Start Processing Host: " + str(host) + "\n")
+        print("** Start Processing Host: " + str(hostname))
+        log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in eos_config_getters:
             # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
-                print("SUCCESS : " + str(config) + " config")
-                log_file.write("SUCCESS : " + str(config) + " config" + "\n")
-                success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
+            configs = nr.run(
+                task=collect_config, getter=config, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            configs_results = configs[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if configs_results is True:
+                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
                 fail_count += 1
+            else:
+                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
+                success_count += 1
         # For block to collect all supported getters
         for entry in eos_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if getters.failed is False:
-                log_file.write("SUCCESS : " + str(entry) + "\n")
-                print("SUCCESS : " + str(entry))
-                success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
+            getters = nr.run(
+                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            getters_results = getters[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if getters_results is True:
+                log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
+                print("FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
+            else:
+                log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
+                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(host))
-        log_file.write("** End Processing Host: " + str(host) + "\n\n")
+        print("** End Processing Host: " + str(hostname))
+        log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # NX-OS Platform Block
     for host in nxos_devices.inventory.hosts.items():
+        # Assign the hostname to a variable from the host tuple
+        hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(host))
-        log_file.write("** Start Processing Host: " + str(host) + "\n")
+        print("** Start Processing Host: " + str(hostname))
+        log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in nxos_config_getters:
             # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
-                print("SUCCESS : " + str(config) + " config")
-                log_file.write("SUCCESS : " + str(config) + " config" + "\n")
-                success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
+            configs = nr.run(
+                task=collect_config, getter=config, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            configs_results = configs[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if configs_results is True:
+                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
                 fail_count += 1
+            else:
+                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
+                success_count += 1
         # For block to collect all supported getters
         for entry in nxos_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if getters.failed is False:
-                log_file.write("SUCCESS : " + str(entry) + "\n")
-                print("SUCCESS : " + str(entry))
-                success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
+            getters = nr.run(
+                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            getters_results = getters[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if getters_results is True:
+                log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
+                print("FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
+            else:
+                log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
+                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(host) + "\n")
-        log_file.write("** End Processing Host: " + str(host) + "\n\n")
+        print("** End Processing Host: " + str(hostname) + "\n")
+        log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # JUNOS Platform Block
     for host in junos_devices.inventory.hosts.items():
+        # Assign the hostname to a variable from the host tuple
+        hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(host))
-        log_file.write("** Start Processing Host: " + str(host) + "\n")
+        print("** Start Processing Host: " + str(hostname))
+        log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in junos_config_getters:
             # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
-                print("SUCCESS : " + str(config) + " config")
-                log_file.write("SUCCESS : " + str(config) + " config" + "\n")
-                success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
+            configs = nr.run(
+                task=collect_config, getter=config, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            configs_results = configs[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if configs_results is True:
+                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
                 fail_count += 1
+            else:
+                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
+                success_count += 1
         for entry in junos_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if getters.failed is False:
-                log_file.write("SUCCESS : " + str(entry) + "\n")
-                print("SUCCESS : " + str(entry))
-                success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
+            getters = nr.run(
+                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            getters_results = getters[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if getters_results is True:
+                log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
+                print("FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
+            else:
+                log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
+                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(host) + "\n")
-        log_file.write("** End Processing Host: " + str(host) + "\n\n")
+        print("** End Processing Host: " + str(hostname) + "\n")
+        log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # IOS-XR Platform Block
     for host in iosxr_devices.inventory.hosts.items():
+        # Assign the hostname to a variable from the host tuple
+        hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(host))
-        log_file.write("** Start Processing Host: " + str(host) + "\n")
+        print("** Start Processing Host: " + str(hostname))
+        log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in iosxr_config_getters:
             # Start collecting the config getters
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            config_result = nr.run(task=collect_config, filter=config, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if config_result.failed is False:
-                print("SUCCESS : " + str(config) + " config")
-                log_file.write("SUCCESS : " + str(config) + " config" + "\n")
-                success_count += 1
-            else:
-                print("FAILED : " + str(config) + " config")
-                log_file.write("FAILED : " + str(config) + " config" + "\n")
+            configs = nr.run(
+                task=collect_config, getter=config, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            configs_results = configs[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if configs_results is True:
+                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
                 fail_count += 1
+            else:
+                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                log_file.write(
+                    "SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                    + "\n"
+                )
+                success_count += 1
         # For block to collect all supported getters
         for entry in iosxr_getters:
             # Start processing getters
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
-            # Conditional block to record success/fail count of the job
-            if getters.failed is False:
-                log_file.write("SUCCESS : " + str(entry) + "\n")
-                print("SUCCESS : " + str(entry))
-                success_count += 1
-            else:
-                log_file.write("FAILED : " + str(entry) + "\n")
-                print("FAILED : " + str(entry))
+            getters = nr.run(
+                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+            )
+            """
+            Access the specific 'napalm_get' result out of the collect_getters function
+            and store whether the failed boolean is True (failure) or False (success)
+            """
+            getters_results = getters[hostname][1].failed
+            # Conditional block to record success/fail count of the 'napalm_get' result
+            if getters_results is True:
+                log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
+                print("FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
+            else:
+                log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
+                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(host))
-        log_file.write("** End Processing Host: " + str(host) + "\n\n")
+        print("** End Processing Host: " + str(hostname))
+        log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # Add the two variables together to get a total count into a variable
     total_count = success_count + fail_count
+    # Provide a summary of the main function and add to log file
     print("SUMMARY" + "\n")
     log_file.write("SUMMARY" + "\n\n")
     print("SUCCESS COUNT : " + str(success_count))
@@ -479,6 +632,7 @@ def getter_collector():
     log_file.write("FAILURE COUNT : " + str(fail_count) + "\n")
     print("TOTAL COUNT : " + str(total_count))
     log_file.write("TOTAL COUNT : " + str(total_count) + "\n")
+    # Close the log file
     log_file.close()
 
 
