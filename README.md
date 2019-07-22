@@ -17,12 +17,12 @@ in sparking their interest in network automation.
 
 By using this toolkit, you will be able to answer and provide information on questions like:
 
-- What model(s) of Cisco devices do we have?
-- What OS version(s) do we have for the same model across the inventory?
-- Has someone configured IPv6 on any devices?
-- What local usernames are configured on all platforms?
-- What devices have the longest uptime?
-- What are all our serial numbers which we need for maintainance renewals?
+_- What model(s) of Cisco devices do we have?_  
+_- What OS version(s) do we have for the same model across the inventory?_  
+_- Has someone configured IPv6 on any devices?_  
+_- What local usernames are configured on all platforms?_  
+_- What devices have the longest uptime?_  
+_- What are all our serial numbers which we need for maintenance renewals?_  
 
 ## Pre-requisites ##
 
@@ -220,7 +220,7 @@ Some of the information has been omitted from the spreadsheet as this is meant t
 
 One the script has run, it will create an Excel workbook using the following convention:  
 
-_Collection-Customer-YYYY-MM-DD-HH-MM-SS.xlsx_
+_Collection-<customer_name>-YYYY-MM-DD-HH-MM-SS.xlsx_
 
 In the toolkit, you can change the customer name variable in the code under the `create_workbook` function towards the end of the code:  
 
@@ -237,3 +237,61 @@ _COLLECTION-LOG-YYYY-MM-DD-HH-MM-SS.txt_
 A collection run on July the 10th, 2019 at 19:19:54 would have the log file name of:  
 
 COLLECTION-LOG-2019-07-10-19-19-54.txt
+
+### Why an Excel workbook?!?
+
+I chose Excel for a few reasons:  
+
+1) Virtually everyone knows how to use Excel so this report can be passed around to non-programmer teams like Procurement, Service Desk or Change Management.
+
+2) It's easy to format and query, or apply additional fields to as needed.
+
+3) This provides information in a format which is easy to understand for management.
+
+4) It demonstrates the advantages of using Nornir as we can access many mature Python modules
+ such as [Openpyxl](https://openpyxl.readthedocs.io/en/stable/index.html), as Nornir is pure Python
+
+
+## Known Issues
+
+At the time of writing, there are two known issues with workarounds for this toolkit
+
+### NAPALM - nxos - get_interfaces_ip
+
+At the time of writing, napalm=2.4.0 did not correctly process the get_interfaces_ip function for nxos device. Below is a link to the issue raised, which seems to be resolved in the develop branch of this version:
+
+https://github.com/napalm-automation/napalm/issues/964
+
+It's anticipated that this will be resolved in the next release. There is a workaround in the above link.
+
+### NAPALM - junos - get_users
+
+In the `collection-toolkit.py` toolkit, the standard way of placing all `<os>_users` into a list and
+iterating over that list doesn't work for junos: 
+
+```
+
+    # Take all the those results and add them to a list so we can iterate over the result
+    os_users = [
+        ios_users,
+        # TODO: Need to work out this junos_users filter not working.
+        # junos_users,
+        eos_users,
+        nxos_users,
+        iosxr_users,
+    ]
+    
+ ```
+ 
+ Therefore, I've had to create a JUNOS platform block just for `junos_users`:  
+ 
+ ```
+   # JUNOS Platform Block
+    """
+    I am not sure how this is working given that the task results
+    are failing, but it is....
+    """
+    for host, task_results in junos_users.items():
+```
+
+This block of code results in getting results for junos devices.
