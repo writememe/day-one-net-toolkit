@@ -12,3 +12,12 @@ A list of items to complete for this toolkit
 - [X] - Comment up code  
 - [X] - Create log file handler for script  
 - [X] - Provide IPv6 support for interfaces_ip function  
+- [X] - Workout how to delete Sheet
+
+## CONTRIBUTING.md
+
+- [X] - Add documentation for contributing
+
+## README.md
+
+- [X] - Fix up setup guidelines

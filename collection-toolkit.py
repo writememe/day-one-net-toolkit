@@ -641,6 +641,8 @@ def create_workbook():
     )
     # Close log file
     log_file.close()
+    # Remove default created which is made using Openpyxl
+    wb.remove(wb["Sheet"])
     # Save workbook
     wb.save(wb_name)
 
