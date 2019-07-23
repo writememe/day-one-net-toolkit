@@ -254,12 +254,12 @@ I chose Excel for a few reasons:
 3) This provides information in a format which is easy to understand for management.
 
 4) It demonstrates the advantages of using Nornir as we can access many mature Python modules
- such as [Openpyxl](https://openpyxl.readthedocs.io/en/stable/index.html), as Nornir is pure Python
+ such as [Openpyxl](https://openpyxl.readthedocs.io/en/stable/index.html), as Nornir is pure Python.
 
 
 ## Known Issues
 
-At the time of writing, there are two known issues with workarounds for this toolkit
+At the time of writing, there are two known issues with workarounds for this toolkit.
 
 ### NAPALM - nxos - get_interfaces_ip
 
@@ -304,4 +304,4 @@ This block of code results in getting results for junos devices.
 ## Contributing ##
 
 If you are interested in contributing or adding new features, please go to this [page](https://github.com/writememe/day-one-net-toolkit/blob/master/CONTRIBUTING.md)
-on how to contribute
+on how to contribute.
