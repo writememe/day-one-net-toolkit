@@ -1,6 +1,7 @@
 # Day One Network Discovery Toolkit #
 
 [![Build Status](https://travis-ci.com/writememe/day-one-net-toolkit.svg?branch=master)](https://travis-ci.com/writememe/day-one-net-toolkit)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
 ## Background ##
@@ -34,13 +35,17 @@ The following pre-requisites are required to use this toolkit:
 
 In addition to these pre-requisites, the following items are recommended:
 
-- Use a virtual environment. An example of this can be done in [Pycharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html)
+- Create a virtual environment for this project.
+ Some examples how to this in 
+ [Pycharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html), 
+ [Mac](https://gist.github.com/pandafulmanda/730a9355e088a9970b18275cb9eadef3) or follow the
+ [Official Documentation](https://virtualenv.pypa.io/en/stable/userguide/)
 - Basic understanding of Python  
 - Basic understanding of YAML
 
 ## Installation ##
 
-To install the toolkit and the associated modules, please perform the following:  
+To install the toolkit and the associated modules, please perform the following from within your virtual environment:  
 
 1) Clone the repository to your local machine:  
 `git clone https://github.com/writememe/day-one-net-toolkit.git`
