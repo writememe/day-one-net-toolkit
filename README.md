@@ -223,7 +223,7 @@ and saves them to an Excel workbook. The information collected is:
 
 Some of the information has been omitted from the spreadsheet as this is meant to provide a key summary of the environment.
 
-One the script has run, it will create an Excel workbook using the following convention:  
+Once the script has run, it will create an Excel workbook using the following convention:  
 
 _Collection-<customer_name>-YYYY-MM-DD-HH-MM-SS.xlsx_
 
@@ -300,3 +300,8 @@ iterating over that list doesn't work for junos:
 ```
 
 This block of code results in getting results for junos devices.
+
+## Contributing ##
+
+If you are interested in contributing or adding new features, please go to this [page](https://github.com/writememe/day-one-net-toolkit/blob/master/CONTRIBUTING.md)
+of how to contribute
