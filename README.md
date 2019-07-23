@@ -304,4 +304,4 @@ This block of code results in getting results for junos devices.
 ## Contributing ##
 
 If you are interested in contributing or adding new features, please go to this [page](https://github.com/writememe/day-one-net-toolkit/blob/master/CONTRIBUTING.md)
-of how to contribute
+on how to contribute
