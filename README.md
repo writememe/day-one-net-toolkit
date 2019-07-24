@@ -13,12 +13,12 @@ At a high level, the intent is to lower the barrier to entry into exploring thes
 projects and provide new users with a real-life example of automating discovery tasks
 when first interacting with a new network.
 
-I have open sourced this repository in an attempt to contribute back to the wider community and hopefully kickstart others
+I have open sourced this project in an attempt to contribute back to the wider community and hopefully kickstart others
 in sparking their interest in network automation.
 
 By using this toolkit, you will be able to answer and provide information on questions like:
 
-_- What model(s) of Cisco devices do we have?_  
+_- What model(s) of Cisco/Juniper/Arista devices do we have?_  
 _- What OS version(s) do we have for the same model across the inventory?_  
 _- Has someone configured IPv6 on any devices?_  
 _- What local usernames are configured on all platforms?_  
@@ -35,9 +35,8 @@ The following pre-requisites are required to use this toolkit:
 
 In addition to these pre-requisites, the following items are recommended:
 
-- Create a virtual environment for this project.
- Some examples how to this in 
- [Pycharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html), 
+- Create a virtual environment for this project. There are some guides on how to do this in 
+ [Pycharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html), on a 
  [Mac](https://gist.github.com/pandafulmanda/730a9355e088a9970b18275cb9eadef3) or follow the
  [Official Documentation](https://virtualenv.pypa.io/en/stable/userguide/)
 - Basic understanding of Python  
