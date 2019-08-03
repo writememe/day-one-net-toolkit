@@ -259,13 +259,13 @@ def main_collector(wb, log_file):
             # Add to log file
             log_file.write("OS Version: " + str(version_result) + "\n")
             # Display printout
-            print("Serial Number: " + str(version_result))
+            print("Serial Number: " + str(ser_num_result))
             # Add to log file
-            log_file.write("Serial Number: " + str(version_result) + "\n")
+            log_file.write("Serial Number: " + str(ser_num_result) + "\n")
             # Display printout
-            print("Uptime: " + str(version_result))
+            print("Uptime: " + str(uptime_result))
             # Add to log file
-            log_file.write("Uptime: " + str(version_result) + "\n")
+            log_file.write("Uptime: " + str(uptime_result) + "\n")
             line = [
                 host,
                 vendor_result,
