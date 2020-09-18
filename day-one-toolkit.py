@@ -182,7 +182,7 @@ def getter_collector():  # noqa
     # Create the log file
     log_file = open(log_file_path, "w")
     # Start of logging output
-    print(f"{Fore.CYAN}STARTING DISCOVERY: " + str(fmt_time))
+    print(f"{Fore.MAGENTA}STARTING DISCOVERY: " + str(fmt_time))
     log_file.write("STARTING DISCOVERY: " + str(fmt_time) + "\n\n")
     """
     Initialise two counters, so that success and failure can be counted
