@@ -69,7 +69,6 @@ else:
     )
 
 
-
 # Functions
 
 
@@ -99,8 +98,8 @@ def collect_getters(task, getter):
         task.run(
             task=write_file,
             content=json.dumps(facts_result[0].result[getter], indent=2),
-            filename=f"" + str(entry_dir) + "/" + str(getter) + ".json", # noqa
-        ) # noqa
+            filename=f"" + str(entry_dir) + "/" + str(getter) + ".json",  # noqa
+        )  # noqa
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
         return "Getter Not Implemented"
@@ -134,14 +133,14 @@ def collect_config(task, getter):
         task.run(
             task=write_file,
             content=config_result.result["config"][getter],
-            filename=f"" + str(entry_dir) + "/" + str(getter) + ".txt", # noqa
+            filename=f"" + str(entry_dir) + "/" + str(getter) + ".txt",  # noqa
         )
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
         print("NAPALM get filter not implemented " + str(getter))
 
 
-def getter_collector(): # noqa
+def getter_collector():  # noqa
     """
     This function is the main function of the toolkit.
 
@@ -347,9 +346,7 @@ def getter_collector(): # noqa
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            configs = nr.run(
-                task=collect_config, getter=config, on_failed=True
-            )
+            configs = nr.run(task=collect_config, getter=config, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -384,9 +381,7 @@ def getter_collector(): # noqa
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True
-            )
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -416,9 +411,7 @@ def getter_collector(): # noqa
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            configs = nr.run(
-                task=collect_config, getter=config, on_failed=True
-            )
+            configs = nr.run(task=collect_config, getter=config, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -453,9 +446,7 @@ def getter_collector(): # noqa
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True
-            )
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -485,9 +476,7 @@ def getter_collector(): # noqa
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            configs = nr.run(
-                task=collect_config, getter=config, on_failed=True
-            )
+            configs = nr.run(task=collect_config, getter=config, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -522,9 +511,7 @@ def getter_collector(): # noqa
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True
-            )
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -554,9 +541,7 @@ def getter_collector(): # noqa
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            configs = nr.run(
-                task=collect_config, getter=config, on_failed=True
-            )
+            configs = nr.run(task=collect_config, getter=config, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -590,9 +575,7 @@ def getter_collector(): # noqa
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True
-            )
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -622,9 +605,7 @@ def getter_collector(): # noqa
             print("Processing " + str(config) + " config ... ")
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
-            configs = nr.run(
-                task=collect_config, getter=config, on_failed=True
-            )
+            configs = nr.run(task=collect_config, getter=config, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
@@ -659,9 +640,7 @@ def getter_collector(): # noqa
             print("Processing Getter: " + str(entry))
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
-            getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True
-            )
+            getters = nr.run(task=collect_getters, getter=entry, on_failed=True)
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)

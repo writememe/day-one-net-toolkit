@@ -45,7 +45,7 @@ def get_users(task):
     return "Complete"
 
 
-def main_collector(wb, log_file): # noqa
+def main_collector(wb, log_file):  # noqa
     """
     This is the main function of the application. In this function, we run tasks against all hosts
     in the inventory and parse the results and place them into various spreadsheet tabs.
