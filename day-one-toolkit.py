@@ -3,16 +3,71 @@
 
 # Import Modules
 from nornir import InitNornir
-from nornir.plugins.tasks.networking import napalm_get
-from nornir.plugins.tasks.files import write_file
+from nornir_napalm.plugins.tasks import napalm_get
+from nornir_utils.plugins.tasks.files import write_file
 import json
 import requests
 import pathlib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import datetime as dt
+import os
+from os import environ
+from colorama import Fore, init
 
 # Disable urllib3 warnings
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+# Auto-reset colorama colours back after each print statement
+init(autoreset=True)
+
+# Gathering environmental variables and assigning to variables to use throughout code.
+# Check whether NORNIR_DEFAULT_USERNAME variable has been set, not mandatory, but recommeneded
+if environ.get("NORNIR_DEFAULT_USERNAME") is not None:
+    # Set the env_uname to this variable so it can be used for the Nornir inventory
+    env_uname = os.environ["NORNIR_DEFAULT_USERNAME"]
+else:
+    # Print warning
+    print(
+        Fore.YELLOW
+        + "*" * 15
+        + " WARNING: Environmental variable `NORNIR_DEFAULT_USERNAME` not set. "
+        + "*" * 15
+    )
+    # Set the env_uname to an empty string, so that the code does not error out.
+    # NOTE: It's valid form to use the groups.yaml and hosts.yaml file(s) to
+    # store credentials so this will not raise an exception
+    env_uname = ""
+    # Print supplementary warning
+    print(
+        Fore.MAGENTA
+        + "*" * 15
+        + " NOTIFICATION: Environmental variable `NORNIR_DEFAULT_USERNAME` now set to ''."
+        + "This may cause all authentication to fail. "
+        + "*" * 15
+    )
+# Check whether NORNIR_DEFAULT_PASSWORD variable has been set, not mandatory, but recommeneded
+if environ.get("NORNIR_DEFAULT_PASSWORD") is not None:
+    # Set the env_pword to this variable so it can be used for the Nornir inventory
+    env_pword = os.environ["NORNIR_DEFAULT_PASSWORD"]
+else:
+    print(
+        Fore.YELLOW
+        + "*" * 15
+        + " WARNING: Environmental variable `NORNIR_DEFAULT_PASSWORD` not set. "
+        + "*" * 15
+    )
+    # Set the env_pword to an empty string, so that the code does not error out.
+    # NOTE: It's valid form to use the groups.yaml and hosts.yaml file(s) to
+    # store credentials so this will not raise an exception
+    env_pword = ""
+    print(
+        Fore.MAGENTA
+        + "*" * 15
+        + " NOTIFICATION: Environmental variable `NORNIR_DEFAULT_PASSWORD` now set to ''."
+        + "This may cause all authentication to fail. "
+        + "*" * 15
+    )
+
 
 
 # Functions
@@ -44,8 +99,8 @@ def collect_getters(task, getter):
         task.run(
             task=write_file,
             content=json.dumps(facts_result[0].result[getter], indent=2),
-            filename=f"" + str(entry_dir) + "/" + str(getter) + ".json",
-        )
+            filename=f"" + str(entry_dir) + "/" + str(getter) + ".json", # noqa
+        ) # noqa
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
         return "Getter Not Implemented"
@@ -79,14 +134,14 @@ def collect_config(task, getter):
         task.run(
             task=write_file,
             content=config_result.result["config"][getter],
-            filename=f"" + str(entry_dir) + "/" + str(getter) + ".txt",
+            filename=f"" + str(entry_dir) + "/" + str(getter) + ".txt", # noqa
         )
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
         print("NAPALM get filter not implemented " + str(getter))
 
 
-def getter_collector():
+def getter_collector(): # noqa
     """
     This function is the main function of the toolkit.
 
@@ -148,6 +203,9 @@ def getter_collector():
             }
         }
     )
+    # Set default username and password from environmental variables.
+    nr.inventory.defaults.username = env_uname
+    nr.inventory.defaults.password = env_pword
     """
     The following block of lists are the supported getters per OS based
     on the website https://napalm.readthedocs.io/en/latest/support/
@@ -290,13 +348,13 @@ def getter_collector():
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
             configs = nr.run(
-                task=collect_config, getter=config, on_failed=True, num_workers=20
+                task=collect_config, getter=config, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            configs_results = configs[hostname][1].failed
+            configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
                 print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
@@ -327,13 +385,13 @@ def getter_collector():
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
             getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+                task=collect_getters, getter=entry, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            getters_results = getters[hostname][1].failed
+            getters_results = getters[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
@@ -359,13 +417,13 @@ def getter_collector():
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
             configs = nr.run(
-                task=collect_config, getter=config, on_failed=True, num_workers=20
+                task=collect_config, getter=config, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            configs_results = configs[hostname][1].failed
+            configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
                 print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
@@ -396,13 +454,13 @@ def getter_collector():
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
             getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+                task=collect_getters, getter=entry, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            getters_results = getters[hostname][1].failed
+            getters_results = getters[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
@@ -428,13 +486,13 @@ def getter_collector():
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
             configs = nr.run(
-                task=collect_config, getter=config, on_failed=True, num_workers=20
+                task=collect_config, getter=config, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            configs_results = configs[hostname][1].failed
+            configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
                 print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
@@ -465,13 +523,13 @@ def getter_collector():
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
             getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+                task=collect_getters, getter=entry, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            getters_results = getters[hostname][1].failed
+            getters_results = getters[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
@@ -497,13 +555,13 @@ def getter_collector():
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
             configs = nr.run(
-                task=collect_config, getter=config, on_failed=True, num_workers=20
+                task=collect_config, getter=config, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            configs_results = configs[hostname][1].failed
+            configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
                 print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
@@ -533,13 +591,13 @@ def getter_collector():
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
             getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+                task=collect_getters, getter=entry, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            getters_results = getters[hostname][1].failed
+            getters_results = getters[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
@@ -565,13 +623,13 @@ def getter_collector():
             log_file.write("Processing " + str(config) + " config ... " + "\n")
             # Execute the collect_config function
             configs = nr.run(
-                task=collect_config, getter=config, on_failed=True, num_workers=20
+                task=collect_config, getter=config, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            configs_results = configs[hostname][1].failed
+            configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
                 print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
@@ -602,13 +660,13 @@ def getter_collector():
             log_file.write("Processing Getter: " + str(entry) + "\n")
             # Execute collect_getters function
             getters = nr.run(
-                task=collect_getters, getter=entry, on_failed=True, num_workers=20
+                task=collect_getters, getter=entry, on_failed=True
             )
             """
             Access the specific 'napalm_get' result out of the collect_getters function
             and store whether the failed boolean is True (failure) or False (success)
             """
-            getters_results = getters[hostname][1].failed
+            getters_results = getters[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")

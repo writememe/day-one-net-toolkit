@@ -1,5 +1,7 @@
-napalm
 nornir
+nornir_napalm
+nornir_netmiko
+nornir_utils
 requests
 pathlib
 datetime
@@ -7,3 +9,4 @@ openpyxl
 black
 pylama
 yamllint
+colorama

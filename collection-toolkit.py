@@ -3,7 +3,7 @@
 
 # Import Modules
 from nornir import InitNornir
-from nornir.plugins.tasks.networking import napalm_get
+from nornir_napalm.plugins.tasks import napalm_get
 import requests
 import pathlib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -45,7 +45,7 @@ def get_users(task):
     return "Complete"
 
 
-def main_collector(wb, log_file):
+def main_collector(wb, log_file): # noqa
     """
     This is the main function of the application. In this function, we run tasks against all hosts
     in the inventory and parse the results and place them into various spreadsheet tabs.
