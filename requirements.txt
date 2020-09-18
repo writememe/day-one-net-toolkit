@@ -10,3 +10,4 @@ black
 pylama
 yamllint
 colorama
+bandit
