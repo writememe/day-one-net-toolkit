@@ -69,7 +69,6 @@ else:
     )
 
 
-
 """
 The following five functions are used to retrieve NAPALM getters required
 for the summary spreadsheet.
@@ -223,9 +222,9 @@ def main_collector(wb, log_file):  # noqa
         iosxr_interfaces,
     ]
     # Iterate over the results in the list above
-    for os in os_interfaces:
+    for nos in os_interfaces:  # noqa
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
             print("Start Processing Host - Interfaces: " + str(host) + "\n")
             # Add to log file
@@ -286,9 +285,9 @@ def main_collector(wb, log_file):  # noqa
     # Take all the those results and add them to a list so we can iterate over the result
     os_facts = [ios_facts, junos_facts, eos_facts, nxos_facts, iosxr_facts]
     # Iterate over the results in the list above
-    for os in os_facts:
+    for nos in os_facts:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
             print("Start Processing Host - Facts: " + str(host) + "\n")
             # Add to log file
@@ -369,9 +368,9 @@ def main_collector(wb, log_file):  # noqa
         iosxr_interfaces_ip,
     ]
     # Iterate over the results in the list above
-    for os in os_interfaces_ip:
+    for nos in os_interfaces_ip:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
             print("Start Processing Host - Interfaces IP: " + str(host) + "\n")
             # Add to log file
@@ -492,9 +491,9 @@ def main_collector(wb, log_file):  # noqa
     # Take all the those results and add them to a list so we can iterate over the result
     os_lldp = [ios_lldp, junos_lldp, eos_lldp, nxos_lldp, iosxr_lldp]
     # Iterate over the results in the list above
-    for os in os_lldp:
+    for nos in os_lldp:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
             print("Start Processing Host - LLDP: " + str(host) + "\n")
             # Add to log file
@@ -556,9 +555,9 @@ def main_collector(wb, log_file):  # noqa
         iosxr_users,
     ]
     # Iterate over the results in the list above
-    for os in os_users:
+    for nos in os_users:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
             print("Start Processing Host - Users: " + str(host) + "\n")
             # Add to log file
