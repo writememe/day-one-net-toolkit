@@ -9,9 +9,65 @@ import pathlib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import datetime as dt
 import openpyxl
+import os
+from os import environ
+from colorama import Fore, init
 
 # Disable urllib3 warnings
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+
+# Auto-reset colorama colours back after each print statement
+init(autoreset=True)
+
+# Gathering environmental variables and assigning to variables to use throughout code.
+# Check whether NORNIR_DEFAULT_USERNAME variable has been set, not mandatory, but recommeneded
+if environ.get("NORNIR_DEFAULT_USERNAME") is not None:
+    # Set the env_uname to this variable so it can be used for the Nornir inventory
+    env_uname = os.environ["NORNIR_DEFAULT_USERNAME"]
+else:
+    # Print warning
+    print(
+        Fore.YELLOW
+        + "*" * 15
+        + " WARNING: Environmental variable `NORNIR_DEFAULT_USERNAME` not set. "
+        + "*" * 15
+    )
+    # Set the env_uname to an empty string, so that the code does not error out.
+    # NOTE: It's valid form to use the groups.yaml and hosts.yaml file(s) to
+    # store credentials so this will not raise an exception
+    env_uname = ""
+    # Print supplementary warning
+    print(
+        Fore.MAGENTA
+        + "*" * 15
+        + " NOTIFICATION: Environmental variable `NORNIR_DEFAULT_USERNAME` now set to ''."
+        + "This may cause all authentication to fail. "
+        + "*" * 15
+    )
+# Check whether NORNIR_DEFAULT_PASSWORD variable has been set, not mandatory, but recommeneded
+if environ.get("NORNIR_DEFAULT_PASSWORD") is not None:
+    # Set the env_pword to this variable so it can be used for the Nornir inventory
+    env_pword = os.environ["NORNIR_DEFAULT_PASSWORD"]
+else:
+    print(
+        Fore.YELLOW
+        + "*" * 15
+        + " WARNING: Environmental variable `NORNIR_DEFAULT_PASSWORD` not set. "
+        + "*" * 15
+    )
+    # Set the env_pword to an empty string, so that the code does not error out.
+    # NOTE: It's valid form to use the groups.yaml and hosts.yaml file(s) to
+    # store credentials so this will not raise an exception
+    env_pword = ""
+    print(
+        Fore.MAGENTA
+        + "*" * 15
+        + " NOTIFICATION: Environmental variable `NORNIR_DEFAULT_PASSWORD` now set to ''."
+        + "This may cause all authentication to fail. "
+        + "*" * 15
+    )
+
 
 
 """
@@ -130,6 +186,9 @@ def main_collector(wb, log_file):  # noqa
             }
         }
     )
+    # Set default username and password from environmental variables.
+    nr.inventory.defaults.username = env_uname
+    nr.inventory.defaults.password = env_pword
     """
     The following block of code assigns a filter based on
     platform to a variable. This variable is used later on
