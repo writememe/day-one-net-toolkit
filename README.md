@@ -1,7 +1,10 @@
 # Day One Network Discovery Toolkit #
 
-[![Build Status](https://travis-ci.com/writememe/day-one-net-toolkit.svg?branch=master)](https://travis-ci.com/writememe/day-one-net-toolkit)
+![day-one-net-toolkit](https://github.com/writememe/day-one-net-toolkit/workflows/day-one-net-toolkit/badge.svg)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 
 
 ## Background ##
@@ -29,31 +32,61 @@ _- What are all our serial numbers which we need for maintenance renewals?_
 
 The following pre-requisites are required to use this toolkit:
 
--  Python 3.6 or higher
--  Git
+- Python 3.6 or higher
+- Git
 - A network inventory of your devices including hostname, IP address, OS type, username and password
 
 In addition to these pre-requisites, the following items are recommended:
 
-- Create a virtual environment for this project. There are some guides on how to do this in 
- [Pycharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html), on a 
- [Mac](https://gist.github.com/pandafulmanda/730a9355e088a9970b18275cb9eadef3) or follow the
- [Official Documentation](https://virtualenv.pypa.io/en/stable/userguide/)
 - Basic understanding of Python  
 - Basic understanding of YAML
+- Basic understanding of JSON
 
 ## Installation ##
 
 To install the toolkit and the associated modules, please perform the following from within your virtual environment:  
 
-1) Clone the repository to your local machine:  
-`git clone https://github.com/writememe/day-one-net-toolkit.git`
-2) Change to the repo directory:  
-`cd day-one-net-toolkit`
-3) Install the required modules:  
-`pip install -r requirements.txt`
+1) Clone the repository to the machine on which you will run the application from:
 
-## Setup ##
+```git
+git clone https://github.com/writememe/day-one-net-toolkit.git
+cd day-one-net-toolkit
+```
+
+2) Populate your Nornir inventory files:
+
+    - [defaults.yaml](inventory/defaults.yaml)
+    - [groups.yaml](inventory/groups.yaml)
+    - [hosts.yaml](inventory/hosts.yaml)
+
+See the [Inventory Setup](#inventory-setup) below for more detailed instructions
+
+3) Create the virtual environment to run the application in:
+
+```console
+virtualenv --python=`which python3` venv
+source venv/bin/activate
+```
+4) Install the requirements:
+
+```python
+pip install -r requirements.txt
+```
+
+5) Set two environmental variables, which are used by the application as the default credentials to login to devices:
+
+```bash
+export NORNIR_DEFAULT_USERNAME=<someusername>
+export NORNIR_DEFAULT_PASSWORD=<somepassword>
+```
+6) Validate these environmental variables by entering the following command:
+
+```bash
+env | grep NORNIR
+```
+You should see the two environment variables set.
+
+## Inventory Setup ##
 
 You need to populate some YAML files with your particular network inventory. Below is the procedure to 
 populate your minimum variables in order to get yourself up and running. 
@@ -61,11 +94,11 @@ This toolkit takes advantages of Nornir's inheritance model so we are as efficie
 
 Throughout the setup, we are going to use the example device inventory below:
 
-| Hostname  |  IP Address | FQDN | Platform| Username| Password|
-| ---------- |----------------|---------------|---------|---------|-------------|
-| lab-iosv-01| 10.0.0.12 | lab-iosv-01.lab.dfjt.local | ios | username1 | 2password |
-| lab-arista-01| 10.0.0.11 | lab-arista-01.lab.dfjt.local | eos | username1| 2password |
-| lab-nxos-01| 10.0.0.14 | lab-nxos-01.lab.dfjt.local | nxos | username1 | 2password |
+| Hostname  |  IP Address | FQDN | Platform|
+| ---------- |----------------|---------------|---------|
+| lab-iosv-01| 10.0.0.12 | lab-iosv-01.lab.dfjt.local | ios |
+| lab-arista-01| 10.0.0.11 | lab-arista-01.lab.dfjt.local | eos |
+| lab-nxos-01| 10.0.0.14 | lab-nxos-01.lab.dfjt.local | nxos |
 
 
 ### Step 1 - inventory/hosts.yaml file
@@ -74,7 +107,7 @@ The first step is to populate the hosts.yaml file with the pertinent information
 
 Below is an example of the hosts.yaml structure for one entry:
 
-```
+```yaml
 <fqdn>
     hostname: <fqdn> or <ip address>
     groups:
@@ -83,7 +116,7 @@ Below is an example of the hosts.yaml structure for one entry:
 
 An extension of this using our example inventory is below, using a mixture of FQDN or IP addresses for the hosts.yaml file:
 
-```
+```yaml
 lab-iosv-01.lab.dfjt.local
     hostname: 10.0.0.12
     groups:
@@ -92,12 +125,12 @@ lab-iosv-01.lab.dfjt.local
 lab-arista-01.lab.dfjt.local
     hostname: 10.0.0.11
     groups:
-        - eos        
+        - eos
         
 lab-nxos-01.lab.dfjt.local
     hostname: lab-nxos-01.lab.dfjt.local
     groups:
-        - nxos       
+        - nxos
 ```
 
 NOTE: We are only putting in the absolute minimum data to get the toolkit up and running. You will notice that other Nornir inventories
@@ -108,50 +141,34 @@ can look markedly different to this and have been enriched with more metadata. T
 The second step is to populate the groups.yaml file with information regarding each group setup in Step 1. Below is an example of what we
 use in our groups.yaml file:
 
-```
+```yaml
 <group_name>:
     platform: <platform>
-    username: <username>
-    password: <password>
 
 ```
 
 An extension of this using our example inventory is below, using the groups which were setup in Step 1:
 
-```
+```yaml
 ios:
     platform: ios
-    username: username1
-    password: 2password
 
 eos:
     platform: eos
-    username: username1
-    password: 2password
 
 nxos:
     platform: nxos
-    username: username1
-    password: 2password
     
 junos:
     platform: junos
-    username: username1
-    password: 2password
     
 iosxr:
     platform: iosxr
-    username: username1
-    password: 2password
 
 ```
 
 NOTE: You will notice some additional groups in here named `junos` and `iosxr` in here as well.
 These were intentionally added to show how you would consistently implement this on other platforms.
-
-**WARNING: Obviously performing this practice means that you have your password(s) for your network access in clear text
-in these files. If you are uncomfortable with this, check out some options in the
-[Nornir documentation](https://nornir.readthedocs.io/en/latest/howto/transforming_inventory_data.html?highlight=transform#Setting-a-default-password).**
 
 You are now setup and ready to use the toolkit!
 
@@ -254,51 +271,6 @@ I chose Excel for a few reasons:
 
 4) It demonstrates the advantages of using Nornir as we can access many mature Python modules
  such as [Openpyxl](https://openpyxl.readthedocs.io/en/stable/index.html), as Nornir is pure Python.
-
-
-## Known Issues
-
-At the time of writing, there are two known issues with workarounds for this toolkit.
-
-### NAPALM - nxos - get_interfaces_ip
-
-At the time of writing, napalm=2.4.0 did not correctly process the get_interfaces_ip function for nxos device. Below is a link to the issue raised, which seems to be resolved in the develop branch of this version:
-
-https://github.com/napalm-automation/napalm/issues/964
-
-It's anticipated that this will be resolved in the next release. There is a workaround in the above link.
-
-### NAPALM - junos - get_users
-
-In the `collection-toolkit.py` toolkit, the standard way of placing all `<os>_users` into a list and
-iterating over that list doesn't work for junos: 
-
-```
-
-    # Take all the those results and add them to a list so we can iterate over the result
-    os_users = [
-        ios_users,
-        # TODO: Need to work out this junos_users filter not working.
-        # junos_users,
-        eos_users,
-        nxos_users,
-        iosxr_users,
-    ]
-    
- ```
- 
- Therefore, I've had to create a JUNOS platform block just for `junos_users`:  
- 
- ```
-   # JUNOS Platform Block
-    """
-    I am not sure how this is working given that the task results
-    are failing, but it is....
-    """
-    for host, task_results in junos_users.items():
-```
-
-This block of code results in getting results for junos devices.
 
 ## Contributing ##
 

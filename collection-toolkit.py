@@ -3,15 +3,72 @@
 
 # Import Modules
 from nornir import InitNornir
-from nornir.plugins.tasks.networking import napalm_get
+from nornir_napalm.plugins.tasks import napalm_get
 import requests
 import pathlib
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import datetime as dt
 import openpyxl
+import os
+from os import environ
+from colorama import Fore, init
 
 # Disable urllib3 warnings
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+
+# Auto-reset colorama colours back after each print statement
+init(autoreset=True)
+
+# Gathering environmental variables and assigning to variables to use throughout code.
+# Check whether NORNIR_DEFAULT_USERNAME variable has been set, not mandatory, but recommeneded
+if environ.get("NORNIR_DEFAULT_USERNAME") is not None:
+    # Set the env_uname to this variable so it can be used for the Nornir inventory
+    env_uname = os.environ["NORNIR_DEFAULT_USERNAME"]
+    print(f"{Fore.CYAN}Environmental variable NORNIR_DEFAULT_USERNAME is set")
+else:
+    # Print warning
+    print(
+        Fore.YELLOW
+        + "*" * 15
+        + " WARNING: Environmental variable `NORNIR_DEFAULT_USERNAME` not set. "
+        + "*" * 15
+    )
+    # Set the env_uname to an empty string, so that the code does not error out.
+    # NOTE: It's valid form to use the groups.yaml and hosts.yaml file(s) to
+    # store credentials so this will not raise an exception
+    env_uname = ""
+    # Print supplementary warning
+    print(
+        Fore.MAGENTA
+        + "*" * 15
+        + " NOTIFICATION: Environmental variable `NORNIR_DEFAULT_USERNAME` now set to ''."
+        + "This may cause all authentication to fail. "
+        + "*" * 15
+    )
+# Check whether NORNIR_DEFAULT_PASSWORD variable has been set, not mandatory, but recommeneded
+if environ.get("NORNIR_DEFAULT_PASSWORD") is not None:
+    # Set the env_pword to this variable so it can be used for the Nornir inventory
+    env_pword = os.environ["NORNIR_DEFAULT_PASSWORD"]
+    print(f"{Fore.CYAN}Environmental variable NORNIR_DEFAULT_PASSWORD is set")
+else:
+    print(
+        Fore.YELLOW
+        + "*" * 15
+        + " WARNING: Environmental variable `NORNIR_DEFAULT_PASSWORD` not set. "
+        + "*" * 15
+    )
+    # Set the env_pword to an empty string, so that the code does not error out.
+    # NOTE: It's valid form to use the groups.yaml and hosts.yaml file(s) to
+    # store credentials so this will not raise an exception
+    env_pword = ""
+    print(
+        Fore.MAGENTA
+        + "*" * 15
+        + " NOTIFICATION: Environmental variable `NORNIR_DEFAULT_PASSWORD` now set to ''."
+        + "This may cause all authentication to fail. "
+        + "*" * 15
+    )
 
 
 """
@@ -45,7 +102,7 @@ def get_users(task):
     return "Complete"
 
 
-def main_collector(wb, log_file):
+def main_collector(wb, log_file):  # noqa
     """
     This is the main function of the application. In this function, we run tasks against all hosts
     in the inventory and parse the results and place them into various spreadsheet tabs.
@@ -130,6 +187,9 @@ def main_collector(wb, log_file):
             }
         }
     )
+    # Set default username and password from environmental variables.
+    nr.inventory.defaults.username = env_uname
+    nr.inventory.defaults.password = env_pword
     """
     The following block of code assigns a filter based on
     platform to a variable. This variable is used later on
@@ -164,11 +224,13 @@ def main_collector(wb, log_file):
         iosxr_interfaces,
     ]
     # Iterate over the results in the list above
-    for os in os_interfaces:
+    for nos in os_interfaces:  # noqa
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Interfaces: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}Start Processing Host - Interfaces: " + str(host) + "\n"
+            )
             # Add to log file
             log_file.write("Start Processing Host - Interfaces: " + str(host) + "\n")
             # Extract the result of the task
@@ -212,7 +274,9 @@ def main_collector(wb, log_file):
                 # Write values to file
                 interfaces_ws.append(line)
             # Display printout
-            print("End Processing Host - Interfaces: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}End Processing Host - Interfaces: " + str(host) + "\n"
+            )
             # Add to log file
             log_file.write("End Processing Host - Interfaces: " + str(host) + "\n\n")
     """
@@ -227,11 +291,11 @@ def main_collector(wb, log_file):
     # Take all the those results and add them to a list so we can iterate over the result
     os_facts = [ios_facts, junos_facts, eos_facts, nxos_facts, iosxr_facts]
     # Iterate over the results in the list above
-    for os in os_facts:
+    for nos in os_facts:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Facts: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}Start Processing Host - Facts: " + str(host) + "\n")
             # Add to log file
             log_file.write("Start Processing Host - Facts: " + str(host) + "\n")
             # Extract the result of the task
@@ -279,7 +343,7 @@ def main_collector(wb, log_file):
             # Write values to file
             facts_ws.append(line)
             # Display printout
-            print("End Processing Host - Facts: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}End Processing Host - Facts: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - Facts: " + str(host) + "\n\n")
     """
@@ -310,11 +374,15 @@ def main_collector(wb, log_file):
         iosxr_interfaces_ip,
     ]
     # Iterate over the results in the list above
-    for os in os_interfaces_ip:
+    for nos in os_interfaces_ip:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Interfaces IP: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}Start Processing Host - Interfaces IP: "
+                + str(host)
+                + "\n"
+            )
             # Add to log file
             log_file.write("Start Processing Host - Interfaces IP: " + str(host) + "\n")
             # Gather results from task
@@ -361,13 +429,13 @@ def main_collector(wb, log_file):
                         # For loop to extract prefix length from prefix_length variable
                         for key, prefix_length_v6 in ip[1].items():
                             # Print must be left on or for loop isn't activated.
-                            print("Prefix length debug print - Ignore")
+                            print(f"{Fore.YELLOW}Prefix length debug print - Ignore")
                             # Debug print
                             # print(prefix_length)
                 # When the IPv6 address is not there, it throws a key error
                 except KeyError:
                     # Display printout
-                    print("IPv6 Address not configured")
+                    print(f"{Fore.YELLOW}IPv6 Address not configured")
                     # Add to log file
                     log_file.write("IPv6 Address not configured" + "\n")
                     # Override value so there is a result which is clear that it is not configured.
@@ -408,7 +476,11 @@ def main_collector(wb, log_file):
                 # Save values to row in workbook
                 interfaces_ip_ws.append(line)
             # Display printout
-            print("End Processing Host - Interfaces IP: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}End Processing Host - Interfaces IP: "
+                + str(host)
+                + "\n"
+            )
             # Add to log file
             log_file.write("End Processing Host - Interfaces IP: " + str(host) + "\n\n")
     """
@@ -433,11 +505,11 @@ def main_collector(wb, log_file):
     # Take all the those results and add them to a list so we can iterate over the result
     os_lldp = [ios_lldp, junos_lldp, eos_lldp, nxos_lldp, iosxr_lldp]
     # Iterate over the results in the list above
-    for os in os_lldp:
+    for nos in os_lldp:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - LLDP: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}Start Processing Host - LLDP: " + str(host) + "\n")
             # Add to log file
             log_file.write("Start Processing Host - LLDP: " + str(host) + "\n")
             # Extract the result of the task
@@ -475,7 +547,7 @@ def main_collector(wb, log_file):
                 # Write values to file
                 lldp_nei_ws.append(line)
             # Display printout
-            print("End Processing Host - LLDP: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}End Processing Host - LLDP: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - LLDP: " + str(host) + "\n\n")
     """
@@ -491,17 +563,17 @@ def main_collector(wb, log_file):
     os_users = [
         ios_users,
         # TODO: Need to work out this junos_users filter not working.
-        # junos_users,
+        junos_users,
         eos_users,
         nxos_users,
         iosxr_users,
     ]
     # Iterate over the results in the list above
-    for os in os_users:
+    for nos in os_users:
         # For loop to process individual results
-        for host, task_results in os.items():
+        for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Users: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}Start Processing Host - Users: " + str(host) + "\n")
             # Add to log file
             log_file.write("Start Processing Host - Users: " + str(host) + "\n")
             # Extract the result of the task
@@ -541,59 +613,9 @@ def main_collector(wb, log_file):
                 # # Write values to file
                 users_ws.append(line)
             # Display printout
-            print("End Processing Host - Users: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}End Processing Host - Users: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - Users: " + str(host) + "\n")
-    # JUNOS Platform Block
-    """
-    I am not sure how this is working given that the task results
-    are failing, but it is....
-    """
-    for host, task_results in junos_users.items():
-        # Display printout
-        print("Start Processing Host - Users: " + str(host) + "\n")
-        # Add to log file
-        log_file.write("Start Processing Host - Users: " + str(host) + "\n")
-        get_users_result = task_results.result
-        # print(get_users_result)
-        # users_name_result = get_users_result["users"]
-        # # print(users_name_result)
-        # Empty list which will be appended to in for loop
-        user_list = []
-        for entry in users_name_result:
-            # Append entries to the user_list list
-            user_list.append(entry)
-        for user in user_list:
-            # Extract the User privilege level and assign to a variable
-            user_level = users_name_result[user]["level"]
-            # Extract the User password and assign to a variable
-            user_pw = users_name_result[user]["password"]
-            # Extract the SSH keys and assign to a variable
-            user_ssh = users_name_result[user]["sshkeys"]
-            # Display printout
-            print("Username: " + str(user))
-            # Add to log file
-            log_file.write("Username: " + str(user) + "\n")
-            # Display printout
-            print("Level: " + str(user_level))
-            # Add to log file
-            log_file.write("Level: " + str(user_level) + "\n")
-            # Display printout
-            print("Password: " + str(user_pw))
-            # Add to log file
-            log_file.write("Password: " + str(user_pw) + "\n")
-            # Display printout
-            print("SSH Keys: " + str(user_ssh))
-            # Add to log file
-            log_file.write("SSH Keys: " + str(user_ssh) + "\n")
-            # Append results to a line to be saved to the workbook
-            line = [host, user, user_level, user_pw, str(user_ssh)]
-            # # Write values to file
-            users_ws.append(line)
-        # Display printout
-        print("End Processing Host - Users: " + str(host) + "\n")
-        # Add to log file
-        log_file.write("End Processing Host - Users: " + str(host) + "\n")
 
 
 def create_workbook():
@@ -629,7 +651,9 @@ def create_workbook():
     wb_name = "Collection-" + customer_name + "-" + fmt_time + ".xlsx"
     # Print workbook name
     print(
-        "COLLECTION COMPLETE \n" + "Results located in Excel workbook: " + str(wb_name)
+        f"{Fore.CYAN}COLLECTION COMPLETE \n"
+        + "Results located in Excel workbook: "
+        + str(wb_name)
     )
     # Add to log file
     log_file.write(

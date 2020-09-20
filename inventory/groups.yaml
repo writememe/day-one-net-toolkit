@@ -1,27 +1,47 @@
 ---
 # groups.yaml file
 # Each group is used to attribute back to a platform
-# TODO: Work out how to properly store secrets
 ios:
     platform: ios
-    username: svc-ansible
-    password: Aut0m@t3
+    # Setting scrapli connection options
+    # https://github.com/carlmontanari/nornir_scrapli#a-simple-example
+    connection_options:
+        scrapli:
+            platform: cisco_iosxe
+            port: 22
+            extras:
+                auth_strict_key: false
 
 junos:
     platform: junos
-    username: svc-ansible
-    password: Aut0m@t3
+    # Setting scrapli connection options
+    # https://github.com/carlmontanari/nornir_scrapli#a-simple-example
+    connection_options:
+        scrapli:
+            platform: juniper_junos
+            port: 22
+            extras:
+                auth_strict_key: false
+
 
 eos:
     platform: eos
-    username: svc-ansible
-    password: Aut0m@t3
+    # Setting scrapli connection options
+    # https://github.com/carlmontanari/nornir_scrapli#a-simple-example
+    connection_options:
+        scrapli:
+            platform: arista_eos
+            port: 22
+            extras:
+                auth_strict_key: false
 
 nxos:
     platform: nxos
-    username: svc-ansible
-    password: Aut0m@t3
-iosxr:
-    platform: iosxr
-    username: svc-ansible
-    password: Aut0m@t3
+    # Setting scrapli connection options
+    # https://github.com/carlmontanari/nornir_scrapli#a-simple-example
+    connection_options:
+        scrapli:
+            platform: cisco_nxos
+            port: 22
+            extras:
+                auth_strict_key: false
