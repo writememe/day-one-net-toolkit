@@ -563,7 +563,7 @@ def main_collector(wb, log_file):  # noqa
     os_users = [
         ios_users,
         # TODO: Need to work out this junos_users filter not working.
-        # junos_users,
+        junos_users,
         eos_users,
         nxos_users,
         iosxr_users,
@@ -616,56 +616,6 @@ def main_collector(wb, log_file):  # noqa
             print(f"{Fore.MAGENTA}End Processing Host - Users: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - Users: " + str(host) + "\n")
-    # JUNOS Platform Block
-    """
-    I am not sure how this is working given that the task results
-    are failing, but it is....
-    """
-    for host, task_results in junos_users.items():
-        # Display printout
-        print(f"{Fore.MAGENTA}Start Processing Host - Users: " + str(host) + "\n")
-        # Add to log file
-        log_file.write("Start Processing Host - Users: " + str(host) + "\n")
-        get_users_result = task_results.result
-        # print(get_users_result)
-        # users_name_result = get_users_result["users"]
-        # # print(users_name_result)
-        # Empty list which will be appended to in for loop
-        user_list = []
-        for entry in users_name_result:
-            # Append entries to the user_list list
-            user_list.append(entry)
-        for user in user_list:
-            # Extract the User privilege level and assign to a variable
-            user_level = users_name_result[user]["level"]
-            # Extract the User password and assign to a variable
-            user_pw = users_name_result[user]["password"]
-            # Extract the SSH keys and assign to a variable
-            user_ssh = users_name_result[user]["sshkeys"]
-            # Display printout
-            print("Username: " + str(user))
-            # Add to log file
-            log_file.write("Username: " + str(user) + "\n")
-            # Display printout
-            print("Level: " + str(user_level))
-            # Add to log file
-            log_file.write("Level: " + str(user_level) + "\n")
-            # Display printout
-            print("Password: " + str(user_pw))
-            # Add to log file
-            log_file.write("Password: " + str(user_pw) + "\n")
-            # Display printout
-            print("SSH Keys: " + str(user_ssh))
-            # Add to log file
-            log_file.write("SSH Keys: " + str(user_ssh) + "\n")
-            # Append results to a line to be saved to the workbook
-            line = [host, user, user_level, user_pw, str(user_ssh)]
-            # # Write values to file
-            users_ws.append(line)
-        # Display printout
-        print(f"{Fore.MAGENTA}End Processing Host - Users: " + str(host) + "\n")
-        # Add to log file
-        log_file.write("End Processing Host - Users: " + str(host) + "\n")
 
 
 def create_workbook():

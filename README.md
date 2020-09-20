@@ -59,8 +59,7 @@ cd day-one-net-toolkit
     - [groups.yaml](inventory/groups.yaml)
     - [hosts.yaml](inventory/hosts.yaml)
 
-Refer to the [Nornir Inventory Documentation](https://nornir.readthedocs.io/en/latest/tutorials/intro/inventory.html) if you have not used Nornir before
-or follow the examples provided in this repository.
+See the [Inventory Setup](#inventory-setup) below for more detailed instructions
 
 3) Create the virtual environment to run the application in:
 
@@ -87,7 +86,7 @@ env | grep NORNIR
 ```
 You should see the two environment variables set.
 
-## Setup ##
+## Inventory Setup ##
 
 You need to populate some YAML files with your particular network inventory. Below is the procedure to 
 populate your minimum variables in order to get yourself up and running. 
@@ -95,11 +94,11 @@ This toolkit takes advantages of Nornir's inheritance model so we are as efficie
 
 Throughout the setup, we are going to use the example device inventory below:
 
-| Hostname  |  IP Address | FQDN | Platform| Username| Password|
-| ---------- |----------------|---------------|---------|---------|-------------|
-| lab-iosv-01| 10.0.0.12 | lab-iosv-01.lab.dfjt.local | ios | username1 | 2password |
-| lab-arista-01| 10.0.0.11 | lab-arista-01.lab.dfjt.local | eos | username1| 2password |
-| lab-nxos-01| 10.0.0.14 | lab-nxos-01.lab.dfjt.local | nxos | username1 | 2password |
+| Hostname  |  IP Address | FQDN | Platform|
+| ---------- |----------------|---------------|---------|
+| lab-iosv-01| 10.0.0.12 | lab-iosv-01.lab.dfjt.local | ios |
+| lab-arista-01| 10.0.0.11 | lab-arista-01.lab.dfjt.local | eos |
+| lab-nxos-01| 10.0.0.14 | lab-nxos-01.lab.dfjt.local | nxos |
 
 
 ### Step 1 - inventory/hosts.yaml file
@@ -272,51 +271,6 @@ I chose Excel for a few reasons:
 
 4) It demonstrates the advantages of using Nornir as we can access many mature Python modules
  such as [Openpyxl](https://openpyxl.readthedocs.io/en/stable/index.html), as Nornir is pure Python.
-
-
-## Known Issues
-
-At the time of writing, there are two known issues with workarounds for this toolkit.
-
-### NAPALM - nxos - get_interfaces_ip
-
-At the time of writing, napalm=2.4.0 did not correctly process the get_interfaces_ip function for nxos device. Below is a link to the issue raised, which seems to be resolved in the develop branch of this version:
-
-https://github.com/napalm-automation/napalm/issues/964
-
-It's anticipated that this will be resolved in the next release. There is a workaround in the above link.
-
-### NAPALM - junos - get_users
-
-In the `collection-toolkit.py` toolkit, the standard way of placing all `<os>_users` into a list and
-iterating over that list doesn't work for junos: 
-
-```python
-
-    # Take all the those results and add them to a list so we can iterate over the result
-    os_users = [
-        ios_users,
-        # TODO: Need to work out this junos_users filter not working.
-        # junos_users,
-        eos_users,
-        nxos_users,
-        iosxr_users,
-    ]
-    
- ```
- 
- Therefore, I've had to create a JUNOS platform block just for `junos_users`:  
- 
- ```python
-   # JUNOS Platform Block
-    """
-    I am not sure how this is working given that the task results
-    are failing, but it is....
-    """
-    for host, task_results in junos_users.items():
-```
-
-This block of code results in getting results for junos devices.
 
 ## Contributing ##
 
