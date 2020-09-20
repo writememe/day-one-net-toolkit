@@ -25,6 +25,7 @@ init(autoreset=True)
 if environ.get("NORNIR_DEFAULT_USERNAME") is not None:
     # Set the env_uname to this variable so it can be used for the Nornir inventory
     env_uname = os.environ["NORNIR_DEFAULT_USERNAME"]
+    print(f"{Fore.CYAN}Environmental variable NORNIR_DEFAULT_USERNAME is set")
 else:
     # Print warning
     print(
@@ -49,6 +50,7 @@ else:
 if environ.get("NORNIR_DEFAULT_PASSWORD") is not None:
     # Set the env_pword to this variable so it can be used for the Nornir inventory
     env_pword = os.environ["NORNIR_DEFAULT_PASSWORD"]
+    print(f"{Fore.CYAN}Environmental variable NORNIR_DEFAULT_PASSWORD is set")
 else:
     print(
         Fore.YELLOW
@@ -137,7 +139,7 @@ def collect_config(task, getter):
         )
     # Handle NAPALM Not Implemented Error exceptions
     except NotImplementedError:
-        print("NAPALM get filter not implemented " + str(getter))
+        print(f"{Fore.YELLOW}NAPALM get filter not implemented " + str(getter))
 
 
 def getter_collector():  # noqa
@@ -339,7 +341,7 @@ def getter_collector():  # noqa
         # Assign the hostname to a variable from the host tuple
         hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** Start Processing Host: " + str(hostname))
         log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in ios_config_getters:
             # Start collecting the config getters
@@ -354,7 +356,13 @@ def getter_collector():  # noqa
             configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
-                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.RED}FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "FAILURE : "
                     + str(hostname)
@@ -365,7 +373,13 @@ def getter_collector():  # noqa
                 )
                 fail_count += 1
             else:
-                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.GREEN}SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "SUCCESS : "
                     + str(hostname)
@@ -390,21 +404,21 @@ def getter_collector():  # noqa
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
-                print("FAILURE : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.RED}FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
             else:
                 log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
-                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.GREEN}SUCCESS : " + str(hostname) + " - " + str(entry))
                 success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** End Processing Host: " + str(hostname))
         log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # EOS Platform Block
     for host in eos_devices.inventory.hosts.items():
         # Assign the hostname to a variable from the host tuple
         hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** Start Processing Host: " + str(hostname))
         log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in eos_config_getters:
             # Start collecting the config getters
@@ -419,7 +433,13 @@ def getter_collector():  # noqa
             configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
-                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.RED}FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "FAILURE : "
                     + str(hostname)
@@ -430,7 +450,13 @@ def getter_collector():  # noqa
                 )
                 fail_count += 1
             else:
-                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.GREEN}SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "SUCCESS : "
                     + str(hostname)
@@ -455,21 +481,21 @@ def getter_collector():  # noqa
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
-                print("FAILURE : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.RED}FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
             else:
                 log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
-                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.GREEN}SUCCESS : " + str(hostname) + " - " + str(entry))
                 success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** End Processing Host: " + str(hostname))
         log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # NX-OS Platform Block
     for host in nxos_devices.inventory.hosts.items():
         # Assign the hostname to a variable from the host tuple
         hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** Start Processing Host: " + str(hostname))
         log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in nxos_config_getters:
             # Start collecting the config getters
@@ -484,7 +510,13 @@ def getter_collector():  # noqa
             configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
-                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.RED}FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "FAILURE : "
                     + str(hostname)
@@ -495,7 +527,13 @@ def getter_collector():  # noqa
                 )
                 fail_count += 1
             else:
-                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.GREEN}SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "SUCCESS : "
                     + str(hostname)
@@ -520,21 +558,21 @@ def getter_collector():  # noqa
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
-                print("FAILURE : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.RED}FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
             else:
                 log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
-                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.GREEN}SUCCESS : " + str(hostname) + " - " + str(entry))
                 success_count += 1
         # Ending processing of host
-        print("** End Processing Host: " + str(hostname) + "\n")
+        print(f"{Fore.MAGENTA}** End Processing Host: " + str(hostname) + "\n")
         log_file.write("** End Processing Host: " + str(hostname) + "\n\n")
     # JUNOS Platform Block
     for host in junos_devices.inventory.hosts.items():
         # Assign the hostname to a variable from the host tuple
         hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** Start Processing Host: " + str(hostname))
         log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in junos_config_getters:
             # Start collecting the config getters
@@ -549,7 +587,13 @@ def getter_collector():  # noqa
             configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
-                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.RED}FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "FAILURE : "
                     + str(hostname)
@@ -560,7 +604,13 @@ def getter_collector():  # noqa
                 )
                 fail_count += 1
             else:
-                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.GREEN}SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "SUCCESS : "
                     + str(hostname)
@@ -584,11 +634,11 @@ def getter_collector():  # noqa
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
-                print("FAILURE : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.RED}FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
             else:
                 log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
-                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.GREEN}SUCCESS : " + str(hostname) + " - " + str(entry))
                 success_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(hostname) + "\n")
@@ -598,7 +648,7 @@ def getter_collector():  # noqa
         # Assign the hostname to a variable from the host tuple
         hostname = host[0]
         # Starting processing of a host
-        print("** Start Processing Host: " + str(hostname))
+        print(f"{Fore.MAGENTA}** Start Processing Host: " + str(hostname))
         log_file.write("** Start Processing Host: " + str(hostname) + "\n")
         for config in iosxr_config_getters:
             # Start collecting the config getters
@@ -613,7 +663,13 @@ def getter_collector():  # noqa
             configs_results = configs[hostname][0].failed
             # Conditional block to record success/fail count of the 'napalm_get' result
             if configs_results is True:
-                print("FAILURE : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.RED}FAILURE : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "FAILURE : "
                     + str(hostname)
@@ -624,7 +680,13 @@ def getter_collector():  # noqa
                 )
                 fail_count += 1
             else:
-                print("SUCCESS : " + str(hostname) + " - " + str(config) + " config")
+                print(
+                    f"{Fore.GREEN}SUCCESS : "
+                    + str(hostname)
+                    + " - "
+                    + str(config)
+                    + " config"
+                )
                 log_file.write(
                     "SUCCESS : "
                     + str(hostname)
@@ -649,11 +711,11 @@ def getter_collector():  # noqa
             # Conditional block to record success/fail count of the 'napalm_get' result
             if getters_results is True:
                 log_file.write("FAILURE : " + str(hostname) + " - " + str(entry) + "\n")
-                print("FAILURE : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.RED}FAILURE : " + str(hostname) + " - " + str(entry))
                 fail_count += 1
             else:
                 log_file.write("SUCCESS : " + str(hostname) + " - " + str(entry) + "\n")
-                print("SUCCESS : " + str(hostname) + " - " + str(entry))
+                print(f"{Fore.GREEN}SUCCESS : " + str(hostname) + " - " + str(entry))
                 success_count += 1
         # Ending processing of host
         print("** End Processing Host: " + str(hostname))
@@ -663,9 +725,9 @@ def getter_collector():  # noqa
     # Provide a summary of the main function and add to log file
     print("SUMMARY" + "\n")
     log_file.write("SUMMARY" + "\n\n")
-    print("SUCCESS COUNT : " + str(success_count))
+    print(f"{Fore.GREEN}SUCCESS COUNT : " + str(success_count))
     log_file.write("SUCCESS COUNT : " + str(success_count) + "\n")
-    print("FAILURE COUNT : " + str(fail_count))
+    print(f"{Fore.RED}FAILURE COUNT : " + str(fail_count))
     log_file.write("FAILURE COUNT : " + str(fail_count) + "\n")
     print("TOTAL COUNT : " + str(total_count))
     log_file.write("TOTAL COUNT : " + str(total_count) + "\n")

@@ -25,6 +25,7 @@ init(autoreset=True)
 if environ.get("NORNIR_DEFAULT_USERNAME") is not None:
     # Set the env_uname to this variable so it can be used for the Nornir inventory
     env_uname = os.environ["NORNIR_DEFAULT_USERNAME"]
+    print(f"{Fore.CYAN}Environmental variable NORNIR_DEFAULT_USERNAME is set")
 else:
     # Print warning
     print(
@@ -49,6 +50,7 @@ else:
 if environ.get("NORNIR_DEFAULT_PASSWORD") is not None:
     # Set the env_pword to this variable so it can be used for the Nornir inventory
     env_pword = os.environ["NORNIR_DEFAULT_PASSWORD"]
+    print(f"{Fore.CYAN}Environmental variable NORNIR_DEFAULT_PASSWORD is set")
 else:
     print(
         Fore.YELLOW
@@ -226,7 +228,9 @@ def main_collector(wb, log_file):  # noqa
         # For loop to process individual results
         for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Interfaces: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}Start Processing Host - Interfaces: " + str(host) + "\n"
+            )
             # Add to log file
             log_file.write("Start Processing Host - Interfaces: " + str(host) + "\n")
             # Extract the result of the task
@@ -270,7 +274,9 @@ def main_collector(wb, log_file):  # noqa
                 # Write values to file
                 interfaces_ws.append(line)
             # Display printout
-            print("End Processing Host - Interfaces: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}End Processing Host - Interfaces: " + str(host) + "\n"
+            )
             # Add to log file
             log_file.write("End Processing Host - Interfaces: " + str(host) + "\n\n")
     """
@@ -289,7 +295,7 @@ def main_collector(wb, log_file):  # noqa
         # For loop to process individual results
         for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Facts: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}Start Processing Host - Facts: " + str(host) + "\n")
             # Add to log file
             log_file.write("Start Processing Host - Facts: " + str(host) + "\n")
             # Extract the result of the task
@@ -337,7 +343,7 @@ def main_collector(wb, log_file):  # noqa
             # Write values to file
             facts_ws.append(line)
             # Display printout
-            print("End Processing Host - Facts: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}End Processing Host - Facts: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - Facts: " + str(host) + "\n\n")
     """
@@ -372,7 +378,11 @@ def main_collector(wb, log_file):  # noqa
         # For loop to process individual results
         for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Interfaces IP: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}Start Processing Host - Interfaces IP: "
+                + str(host)
+                + "\n"
+            )
             # Add to log file
             log_file.write("Start Processing Host - Interfaces IP: " + str(host) + "\n")
             # Gather results from task
@@ -419,13 +429,13 @@ def main_collector(wb, log_file):  # noqa
                         # For loop to extract prefix length from prefix_length variable
                         for key, prefix_length_v6 in ip[1].items():
                             # Print must be left on or for loop isn't activated.
-                            print("Prefix length debug print - Ignore")
+                            print(f"{Fore.YELLOW}Prefix length debug print - Ignore")
                             # Debug print
                             # print(prefix_length)
                 # When the IPv6 address is not there, it throws a key error
                 except KeyError:
                     # Display printout
-                    print("IPv6 Address not configured")
+                    print(f"{Fore.YELLOW}IPv6 Address not configured")
                     # Add to log file
                     log_file.write("IPv6 Address not configured" + "\n")
                     # Override value so there is a result which is clear that it is not configured.
@@ -466,7 +476,11 @@ def main_collector(wb, log_file):  # noqa
                 # Save values to row in workbook
                 interfaces_ip_ws.append(line)
             # Display printout
-            print("End Processing Host - Interfaces IP: " + str(host) + "\n")
+            print(
+                f"{Fore.MAGENTA}End Processing Host - Interfaces IP: "
+                + str(host)
+                + "\n"
+            )
             # Add to log file
             log_file.write("End Processing Host - Interfaces IP: " + str(host) + "\n\n")
     """
@@ -495,7 +509,7 @@ def main_collector(wb, log_file):  # noqa
         # For loop to process individual results
         for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - LLDP: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}Start Processing Host - LLDP: " + str(host) + "\n")
             # Add to log file
             log_file.write("Start Processing Host - LLDP: " + str(host) + "\n")
             # Extract the result of the task
@@ -533,7 +547,7 @@ def main_collector(wb, log_file):  # noqa
                 # Write values to file
                 lldp_nei_ws.append(line)
             # Display printout
-            print("End Processing Host - LLDP: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}End Processing Host - LLDP: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - LLDP: " + str(host) + "\n\n")
     """
@@ -559,7 +573,7 @@ def main_collector(wb, log_file):  # noqa
         # For loop to process individual results
         for host, task_results in nos.items():
             # Display printout
-            print("Start Processing Host - Users: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}Start Processing Host - Users: " + str(host) + "\n")
             # Add to log file
             log_file.write("Start Processing Host - Users: " + str(host) + "\n")
             # Extract the result of the task
@@ -599,7 +613,7 @@ def main_collector(wb, log_file):  # noqa
                 # # Write values to file
                 users_ws.append(line)
             # Display printout
-            print("End Processing Host - Users: " + str(host) + "\n")
+            print(f"{Fore.MAGENTA}End Processing Host - Users: " + str(host) + "\n")
             # Add to log file
             log_file.write("End Processing Host - Users: " + str(host) + "\n")
     # JUNOS Platform Block
@@ -609,7 +623,7 @@ def main_collector(wb, log_file):  # noqa
     """
     for host, task_results in junos_users.items():
         # Display printout
-        print("Start Processing Host - Users: " + str(host) + "\n")
+        print(f"{Fore.MAGENTA}Start Processing Host - Users: " + str(host) + "\n")
         # Add to log file
         log_file.write("Start Processing Host - Users: " + str(host) + "\n")
         get_users_result = task_results.result
@@ -649,7 +663,7 @@ def main_collector(wb, log_file):  # noqa
             # # Write values to file
             users_ws.append(line)
         # Display printout
-        print("End Processing Host - Users: " + str(host) + "\n")
+        print(f"{Fore.MAGENTA}End Processing Host - Users: " + str(host) + "\n")
         # Add to log file
         log_file.write("End Processing Host - Users: " + str(host) + "\n")
 
@@ -687,7 +701,9 @@ def create_workbook():
     wb_name = "Collection-" + customer_name + "-" + fmt_time + ".xlsx"
     # Print workbook name
     print(
-        "COLLECTION COMPLETE \n" + "Results located in Excel workbook: " + str(wb_name)
+        f"{Fore.CYAN}COLLECTION COMPLETE \n"
+        + "Results located in Excel workbook: "
+        + str(wb_name)
     )
     # Add to log file
     log_file.write(

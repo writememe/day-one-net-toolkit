@@ -32,29 +32,60 @@ _- What are all our serial numbers which we need for maintenance renewals?_
 
 The following pre-requisites are required to use this toolkit:
 
--  Python 3.6 or higher
--  Git
+- Python 3.6 or higher
+- Git
 - A network inventory of your devices including hostname, IP address, OS type, username and password
 
 In addition to these pre-requisites, the following items are recommended:
 
-- Create a virtual environment for this project. There are some guides on how to do this in 
- [Pycharm](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html), on a 
- [Mac](https://gist.github.com/pandafulmanda/730a9355e088a9970b18275cb9eadef3) or follow the
- [Official Documentation](https://virtualenv.pypa.io/en/stable/userguide/)
 - Basic understanding of Python  
 - Basic understanding of YAML
+- Basic understanding of JSON
 
 ## Installation ##
 
 To install the toolkit and the associated modules, please perform the following from within your virtual environment:  
 
-1) Clone the repository to your local machine:  
-`git clone https://github.com/writememe/day-one-net-toolkit.git`
-2) Change to the repo directory:  
-`cd day-one-net-toolkit`
-3) Install the required modules:  
-`pip install -r requirements.txt`
+1) Clone the repository to the machine on which you will run the application from:
+
+```git
+git clone https://github.com/writememe/day-one-net-toolkit.git
+cd day-one-net-toolkit
+```
+
+2) Populate your Nornir inventory files:
+
+    - [defaults.yaml](inventory/defaults.yaml)
+    - [groups.yaml](inventory/groups.yaml)
+    - [hosts.yaml](inventory/hosts.yaml)
+
+Refer to the [Nornir Inventory Documentation](https://nornir.readthedocs.io/en/latest/tutorials/intro/inventory.html) if you have not used Nornir before
+or follow the examples provided in this repository.
+
+3) Create the virtual environment to run the application in:
+
+```console
+virtualenv --python=`which python3` venv
+source venv/bin/activate
+```
+4) Install the requirements:
+
+```python
+pip install -r requirements.txt
+```
+
+5) Set two environmental variables, which are used by the application as the default credentials to login to devices:
+
+```bash
+export NORNIR_DEFAULT_USERNAME=<someusername>
+export NORNIR_DEFAULT_PASSWORD=<somepassword>
+```
+6) Validate these environmental variables by entering the following command:
+
+```bash
+env | grep NORNIR
+```
+You should see the two environment variables set.
 
 ## Setup ##
 
@@ -77,7 +108,7 @@ The first step is to populate the hosts.yaml file with the pertinent information
 
 Below is an example of the hosts.yaml structure for one entry:
 
-```
+```yaml
 <fqdn>
     hostname: <fqdn> or <ip address>
     groups:
@@ -86,7 +117,7 @@ Below is an example of the hosts.yaml structure for one entry:
 
 An extension of this using our example inventory is below, using a mixture of FQDN or IP addresses for the hosts.yaml file:
 
-```
+```yaml
 lab-iosv-01.lab.dfjt.local
     hostname: 10.0.0.12
     groups:
@@ -95,12 +126,12 @@ lab-iosv-01.lab.dfjt.local
 lab-arista-01.lab.dfjt.local
     hostname: 10.0.0.11
     groups:
-        - eos        
+        - eos
         
 lab-nxos-01.lab.dfjt.local
     hostname: lab-nxos-01.lab.dfjt.local
     groups:
-        - nxos       
+        - nxos
 ```
 
 NOTE: We are only putting in the absolute minimum data to get the toolkit up and running. You will notice that other Nornir inventories
@@ -111,50 +142,34 @@ can look markedly different to this and have been enriched with more metadata. T
 The second step is to populate the groups.yaml file with information regarding each group setup in Step 1. Below is an example of what we
 use in our groups.yaml file:
 
-```
+```yaml
 <group_name>:
     platform: <platform>
-    username: <username>
-    password: <password>
 
 ```
 
 An extension of this using our example inventory is below, using the groups which were setup in Step 1:
 
-```
+```yaml
 ios:
     platform: ios
-    username: username1
-    password: 2password
 
 eos:
     platform: eos
-    username: username1
-    password: 2password
 
 nxos:
     platform: nxos
-    username: username1
-    password: 2password
     
 junos:
     platform: junos
-    username: username1
-    password: 2password
     
 iosxr:
     platform: iosxr
-    username: username1
-    password: 2password
 
 ```
 
 NOTE: You will notice some additional groups in here named `junos` and `iosxr` in here as well.
 These were intentionally added to show how you would consistently implement this on other platforms.
-
-**WARNING: Obviously performing this practice means that you have your password(s) for your network access in clear text
-in these files. If you are uncomfortable with this, check out some options in the
-[Nornir documentation](https://nornir.readthedocs.io/en/latest/howto/transforming_inventory_data.html?highlight=transform#Setting-a-default-password).**
 
 You are now setup and ready to use the toolkit!
 
@@ -276,7 +291,7 @@ It's anticipated that this will be resolved in the next release. There is a work
 In the `collection-toolkit.py` toolkit, the standard way of placing all `<os>_users` into a list and
 iterating over that list doesn't work for junos: 
 
-```
+```python
 
     # Take all the those results and add them to a list so we can iterate over the result
     os_users = [
@@ -292,7 +307,7 @@ iterating over that list doesn't work for junos:
  
  Therefore, I've had to create a JUNOS platform block just for `junos_users`:  
  
- ```
+ ```python
    # JUNOS Platform Block
     """
     I am not sure how this is working given that the task results

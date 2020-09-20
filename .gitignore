@@ -137,3 +137,6 @@ app/nornir.log
 logs/
 facts/
 configs/
+
+# Remove collection toolkit spreadsheets
+*.xlsx
