@@ -7,6 +7,19 @@
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/writememe/day-one-net-toolkit)
 
+## Table of Contents
+
+- [Backgroumd](#background)
+- [Pre-requisites](#pre-requisites)
+- [Installation](#installation)
+  - [Inventory Setup](#inventory-setup)
+    - [hosts.yaml file](#step-1---inventoryhostsyaml-file)
+    - [groups.yaml file](#step-2---inventorygroupsyaml-file)
+- [Operating Instructions](#operating-instructions)
+  - [day-one-toolkit.py - Detailed discovery and config collection](#day-one-toolkitpy---detailed-discovery-and-config-collection)
+  - [collection-toolkit.py - Summarised discovery](#collection-toolkitpy---summarised-discovery)
+- [Supporting Information](#supporting-information)
+- [Contributing](#contributing)
 
 ## Background ##
 
@@ -87,7 +100,7 @@ env | grep NORNIR
 ```
 You should see the two environment variables set.
 
-## Inventory Setup ##
+### Inventory Setup ##
 
 You need to populate some YAML files with your particular network inventory. Below is the procedure to 
 populate your minimum variables in order to get yourself up and running. 
@@ -101,8 +114,7 @@ Throughout the setup, we are going to use the example device inventory below:
 | lab-arista-01| 10.0.0.11 | lab-arista-01.lab.dfjt.local | eos |
 | lab-nxos-01| 10.0.0.14 | lab-nxos-01.lab.dfjt.local | nxos |
 
-
-### Step 1 - inventory/hosts.yaml file
+#### Step 1 - inventory/hosts.yaml file
 
 The first step is to populate the hosts.yaml file with the pertinent information about your hosts.
 
@@ -137,7 +149,7 @@ lab-nxos-01.lab.dfjt.local
 NOTE: We are only putting in the absolute minimum data to get the toolkit up and running. You will notice that other Nornir inventories
 can look markedly different to this and have been enriched with more metadata. This will not be explored in this toolkit.
 
-### Step 2 - inventory/groups.yaml file
+#### Step 2 - inventory/groups.yaml file
 
 The second step is to populate the groups.yaml file with information regarding each group setup in Step 1. Below is an example of what we
 use in our groups.yaml file:
@@ -173,6 +185,22 @@ These were intentionally added to show how you would consistently implement this
 
 You are now setup and ready to use the toolkit!
 
+## Operating Instructions
+
+To run the scripts, please run the following from the command line.
+
+For `day-one-toolkit.py` please run the following:
+
+```python
+python day-one-toolkit.py
+```
+
+For `collection-toolkit.py` please run the following:
+
+```python
+python collection-toolkit.py
+```
+
 ## day-one-toolkit.py - Detailed discovery and config collection
 
 This script uses the Nornir inventory used in the setup and performs two operations:
@@ -180,7 +208,7 @@ This script uses the Nornir inventory used in the setup and performs two operati
 - Collect the running and startup/candidate configurations for each hosts and
 store them using the following directory convention:
 
-```
+```bash
 .
 |
 ├── configs
@@ -196,12 +224,13 @@ store them using the following directory convention:
 
 
 ```
+
 NOTE: The directory structure is dynamically allocated and the appropriate configs are retrieved based on platform.
 
 - Based on the supported list of [NAPALM getters](https://napalm.readthedocs.io/en/latest/support/index.html#getters-support-matrix),
  attempt to retrieve all the getters which are supported on each platform and store them using the following directory convention:  
  
-```
+```bash
 facts
 ├── lab-arista-01.lab.dfjt.local
     ├── arp_table.json
@@ -225,7 +254,6 @@ A collection run on July the 10th, 2019 at 19:19:54 would have the log file name
 DISCOVERY-LOG-2019-07-10-19-19-54.txt
 
 From here, you could SCP these files to a central location, or commit them to a central repository for version control and tracking.
-
 
 ## collection-toolkit.py - Summarised discovery
 
@@ -272,6 +300,13 @@ I chose Excel for a few reasons:
 
 4) It demonstrates the advantages of using Nornir as we can access many mature Python modules
  such as [Openpyxl](https://openpyxl.readthedocs.io/en/stable/index.html), as Nornir is pure Python.
+
+## Supporting Information
+
+In addition to what is documented in this repo, I've written some more long form descriptions of Nornir and solutions presented here over at my blog:
+
+[Exploring Nornir - Part One](https://blog.danielteycheney.com/posts/exploring-nornir-part-one/)
+[Exploring Nornir - Part Two](https://blog.danielteycheney.com/posts/exploring-nornir-part-two/)
 
 ## Contributing ##
 
