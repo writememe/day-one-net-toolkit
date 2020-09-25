@@ -9,7 +9,7 @@
 
 ## Table of Contents
 
-- [Backgroumd](#background)
+- [Background](#background)
 - [Pre-requisites](#pre-requisites)
 - [Installation](#installation)
   - [Inventory Setup](#inventory-setup)
