@@ -306,6 +306,7 @@ I chose Excel for a few reasons:
 In addition to what is documented in this repo, I've written some more long form descriptions of Nornir and solutions presented here over at my blog:
 
 [Exploring Nornir - Part One](https://blog.danielteycheney.com/posts/exploring-nornir-part-one/)
+
 [Exploring Nornir - Part Two](https://blog.danielteycheney.com/posts/exploring-nornir-part-two/)
 
 ## Contributing ##
